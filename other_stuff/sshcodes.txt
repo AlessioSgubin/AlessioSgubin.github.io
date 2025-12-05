@@ -1,0 +1,25 @@
+In questo file testo ho raccolto i principali comandi da usare per accedere/caricare file/stampare file da linea di comando.
+[Attenzione! Tutto quello che segue l'ho usato su Windows, non garantisco il funzionamento da altri sistemi operativi]
+
+### ENTRARE POISSON/DM.UNIPI.IT
+
+ssh [nomeutente_steffé]@poisson.phc.dm.unipi.it
+ssh [nomeutente_elearning]@login.dm.unipi.it
+
+### CARICARE FILE (da Prompt dei Comandi di Windows)
+
+# Per navigare tra i file di Windows, bisogna eseguire il comando dalla directory dove si trova il file da caricare
+cd "directory file"
+
+# Comando che invia il file "nomefile.ext" all'indirizzo "posizione/nomefile.ext"
+scp "nomefile.ext" [nomeutente_steffé]@poisson.phc.dm.unipi.it:"posizione/nomefile.ext"
+scp "nomefile.ext" [nomeutente_elearning]@login.dm.unipi.it:"Desktop/nomefile.ext"
+
+### STAMPARE FILE (dalla linea di comando, una volta entrati con ssh su login.dm.unipi.it)
+
+# Segue il comando generico, con le opzioni: stampante a lato fisica (cdclf), fronte-retro (two-sided-long-edge) e con 2 pagine per foglio (number-up=2). Basta modificare/cancellare eventualmente le opzioni indesiderate
+lp -d cdclf -o sides=two-sided-short-edge -o number-up=2 "nomefile.ext"
+
+# Per controllare lo stato della stampa, basta usare il seguente comando. Usando l'opzione -W si decide cosa guardare:
+lpstat -W not-completed				# stampe non ancora completate
+lpstat -W completed				# stampe completate

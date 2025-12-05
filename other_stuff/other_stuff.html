@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<link rel="stylesheet" type="text/css" href="../style_stuff.css" />
+	<meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1.0"> 
+	<title>Web Page - Alessio Sgubin</title>
+</head>
+
+<body>
+    <!--        HEADER              -->
+	<div class="header">
+        <h1>Alessio Sgubin - WebPage</h1>
+        <p>Other Stuff</p>
+    </div>
+    
+    <!--        NAVIGATION BAR      -->
+    <div class="topnav">
+        <a href="../index.html">About me</a>
+        <a href="../research/research.html">Research</a>
+        <a href="../study_res/study_res.html">Study resources</a>
+        <a href="../projects/projects.html">Projects</a>
+        <a href="../seminars/seminars.html">Seminars and Conferences</a>
+        <a href="../other_stuff/other_stuff.html">Other stuff</a>
+    </div>
+
+    <!--        CONTENT             -->
+    <div class="row">
+        <div class="leftcolumn">
+            <div class="card">
+                <div class="sidenav">       <!--    SIDEBAR    -->
+                    <button class="dropdown-btn">Programming and Coding<i class="fa fa-caret-down"></i></button>                <!--Year 1-->
+                    <div class="dropdown-container">
+                        <button class="button2" onclick="select_page('github')">GitHub Repositories</button>
+                        <button class="button2" onclick="select_page('ssh_code')">SSH Codes</button>
+                    </div>
+                </div> 
+            </div>
+        </div>
+        <div class="rightcolumn">
+            <div class="card" id="start_page">
+                <h2>What to find on this page</h2>
+                <p>
+                    Here you can find my personal projects, which started from passions outside of mathematics (even though some numbers may appear here and there...)!
+                </p>
+            </div>
+            <div class="card_course" id="start_page">
+                <h2>What to find on this page</h2>
+                <p>
+                    Here you can find my personal projects, which started from passions outside of mathematics (even though some numbers may appear here and there...)!
+                </p>
+            </div>
+            
+            <div class="card_course" id="github">
+                <h2>GitHub Repositories</h2>
+                <p>
+                    Here you can find a link to my GitHub profile.
+                </p>
+                <a class="button1" href="https://github.com/AlessioSgubin">GitHub Profile</a>
+            </div>
+
+            <div class="card_course" id="ssh_code">
+                <h2>SSH Code</h2>
+                <p>
+                    Here I collected some lines of code, useful for logging into remote machines and print stuff at the Department of Mathematics, University of Pisa.
+                </p>
+                <a class="button1" href="sshcodes.txt">SSH Codes</a>
+            </div>
+
+
+<!--                                        TEMPLATE
+            <div class="card_course" id="">
+                <h2>TITLE</h2>
+                <p>
+                    DESCRIPTION
+                </p>
+                <a class="button1" href="#">BUTTON</a>
+            </div>
+-->
+        </div>
+    </div>
+
+    <!--        FOOTER              -->
+    <div class="footer">
+        <h3>Contact me</h3>
+        <p>
+            e-mail (institutional): a.sgubin@studenti.unipi.it<br><br>
+            e-mail (personal): alessiosgubin@gmail.com
+        </p>
+    </div>
+
+
+<!--    Script for hiding sidebar   -->
+<script>
+    //* Loop through all dropdown buttons to toggle between hiding and showing its dropdown content - This allows the user to have multiple dropdowns without any conflict */
+    var dropdown = document.getElementsByClassName("dropdown-btn");
+    var i;
+
+    for (i = 0; i < dropdown.length; i++) {
+    dropdown[i].addEventListener("click", function() {
+        this.classList.toggle("active");
+        var dropdownContent = this.nextElementSibling;
+        if (dropdownContent.style.display === "block") {
+        dropdownContent.style.display = "none";
+        } else {
+        dropdownContent.style.display = "block";
+        }
+    });
+    } 
+</script>
+
+<script>
+    // Reading localStorage for a specific page to open at the start
+    var passed_parameters = window.location.search;
+    var urlParams = new URLSearchParams(passed_parameters);
+    var current_card = urlParams.get('specaddr')
+    if (current_card === null) {
+        current_card = "start_page";
+    }
+    select_page(current_card)
+
+    // Defining the function that hide/draws the different cards
+    function select_page(id_page) {
+        var cards = document.getElementsByClassName("card_course");
+        for (i = 0; i < cards.length; i++) {
+            if (cards[i].id === id_page) {
+                cards[i].style.display = "block";
+            }
+            else {
+                cards[i].style.display = "none";
+            }
+        }
+        document.getElementById("start_page").style.display = "none";
+    }
+</script>
+
+
+</body>
+

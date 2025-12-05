@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<script>
+	function newTxt() {
+		var el = document.getElementById('test');
+		if(el.innerHTML == "shhh"){
+			el.innerHTML = "Testo completamente innocuo, niente da vedere qui"
+		}
+		else{
+			el.innerHTML = "shhh"
+		}
+
+	}
+	</script>
+
+	<!-- <script>   alert("Prova!");        </script> -->
+
+	<script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-MML-AM_CHTML">
+	</script><script type="text/x-mathjax-config">
+	MathJax.Hub.Config({
+	  tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+	});
+	</script>
+
+	<link rel="stylesheet" type="text/css" href="style.css" />
+	<meta charset="utf-8">
+	<title>Esercitazione - Sgubin Alessio</title>
+</head>
+<body>
+	<a href="../index_en.html">HomePage</a> > <a href="corsi.html">Corsi</a> > <a href="lcmc.html">LCMC</a> > <a href="esercitazione.html">LCMC Esercitazione</a>
+	<br><br>
+	<h1>
+		Home Page di Sgubin Alessio
+	</h1>
+	<h2>
+		Prova testo
+	</h2>
+
+	Questa è una prova di LATEX: $\frac{ax}{b}+c$ <br><br>
+	Prova testo nel body della pagina html! <br>
+	<mark>Questo testo è evidenziato</mark>
+
+
+<p>
+	<h2>
+		Esercizio Liste
+	</h2>
+
+	Ecco una lista!
+	
+	<ul>
+		<li> elemento 1
+		<li> elemento 2
+    </ul>
+		
+</p>
+
+<p>
+	<h2>
+		Immagine di prova
+	</h2>
+
+	<img src="Photo1.jpg" width=400 height=300 alt="Foto di un fiume"/>
+	<br> <br>
+	Clicca <a href="page2.html">qui</a> per la pagina 2 del sito.
+	<button onclick="newTxt();">Clicca qui</button>
+</p>
+<p>
+	<h2>
+		Testo contenuto in un box
+	</h2>
+	Questo è un testo normale nel mio file html, senza nessuno stile o margine.
+	<div id="centered">
+		Questo testo invece è inserito in un box con bordi, vediamo cosa succede?
+	</div>
+	<div id="test">
+		Questo è un testo di prova!
+	</div>
+	<br><br>
+	<footer>
+		<a href="../index_en.html">HomePage</a> > <a href="corsi.html">Corsi</a> > <a href="lcmc.html">LCMC</a> > <a href="esercitazione.html">LCMC Esercitazione</a>
+	</footer>
+</p>
+</body>
+
+</html>
+
+

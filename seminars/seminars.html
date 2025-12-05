@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<link rel="stylesheet" type="text/css" href="../style_study.css" />
+	<meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1.0"> 
+	<title>Web Page - Alessio Sgubin</title>
+</head>
+
+<body>
+    <!--        HEADER              -->
+	<div class="header">
+        <h1>Alessio Sgubin - WebPage</h1>
+        <p>Seminars and Conferences</p>
+    </div>
+    
+    <!--        NAVIGATION BAR      -->
+    <div class="topnav">
+        <a href="../index.html">About me</a>
+        <a href="../research/research.html">Research</a>
+        <a href="../study_res/study_res.html">Study resources</a>
+        <a href="../projects/projects.html">Projects</a>
+        <a href="../seminars/seminars.html">Seminars and Conferences</a>
+        <a href="../other_stuff/other_stuff.html">Other stuff</a>
+    </div>
+
+    <!--        CONTENT             -->
+    <div class="row">
+        <div class="leftcolumn">
+            <div class="card">
+                <h2>Seminars</h2>
+                <div class="sidenav">       <!--    SIDEBAR    -->
+                    <button class="dropdown-btn">COSE<i class="fa fa-caret-down"></i></button>                <!--Year 1-->
+                    <div class="dropdown-container">
+                        <button class="button2" onclick="select_page('cose22')">2022_I/II Combinatorial Reciprocities</button>
+                        <button class="button2" onclick="select_page('cose23i')">2023_I Matroids</button>
+                        <button class="button2" onclick="select_page('cose23ii')">2023_II Hyperplane Arrangements</button>
+                    </div>
+                    <button class="dropdown-btn">ROSICO<i class="fa fa-caret-down"></i></button>                <!--Year 1-->
+                    <div class="dropdown-container">
+                        <button class="button2" onclick="select_page('rosico23ii')">2023_II Toric Varieties</button>
+                        <button class="button2" onclick="select_page('rosico24i')">2024_I q-Ehrhart Theory</button>
+                    </div>
+                </div> 
+            </div>
+            <div class="card">
+                <h2>Conferences and Graduate Schools</h2>
+                <div class="sidenav">       <!--    SIDEBAR    -->
+                    <button class="button2" onclick="location.href='https://people.dm.unipi.it/dadderio/dobb2024'">Toblach 2024</button>
+                    <button class="button2" onclick="location.href='https://sites.google.com/unipi.it/gradisco2024/home'">GRADISCO 2024</button>
+                    <button class="button2" onclick="location.href='https://www.mat.univie.ac.at/~slc/index.html'">92nd SLC</button>
+                    <button class="button2" onclick="location.href='https://sites.google.com/view/gsmaac25/home'">GSMAAC 2025</button>
+                    <button class="button2" onclick="select_page('cortona25')">Cortona 2025</button>
+                </div> 
+            </div>
+        </div>
+        <div class="rightcolumn">
+            <div class="card" id="start_page">
+                <h2>What to find on this page</h2>
+                <p>
+                    In this section I collected all the seminars and conferences I attended. On the left, you can find specific links to material I prepared for the talks.
+                    <br><br>
+                    This is a comprehensive list of the seminars that took place at University of Pisa. For a detailed description of the topics, you can go to the <a href="https://cult.dm.unipi.it/seminars/">CULT page</a>.
+                    <ul>
+                        <li>COSE 2022/23 ~ I and II semester: Combinatorial reciprocity theorems</li>
+                        <li>COSE 2023/24 ~ I semester: Matroid theory</li>
+                        <li>COSE 2023/24 ~ II semester: Hyperplane arrangements</li>
+                        <li>COSE 2024/25 ~ I semester: Sandpiles</li>
+                        <br>
+                        <li>ROSICO 2023/24 ~ II semester: Toric varieties</li>
+                        <li>ROSICO 2024/25 ~ I semester: Harmonics and graded Ehrhart theory</li>
+                    </ul>
+                    Since my first year as Master student, I attended different conferences where I got a chance to know many PhD students and researchers and discover new topics related to Combinatorics. These experiences are what definitely convinced me to look into an academic career, we will see where this will lead me!
+                    <br><br>
+                    Here I have a list of these conferences and graduate schools I have attended as a partecipant o a speaker.
+                    <ul>
+                        <li>Toblach 2024: Geometry, Algebra and Combinatorics of Moduli Spaces and Configurations VI - Partecipant</li>
+                        <li>GRADISCO 2024: Graduate International School in Combinatorics - Partecipant</li>
+                        <li>92nd SLC: Seminaire Lotharingien de Combinatoire - Partecipant</li>
+                        <li>GSMAAC 2025: Graduate Student Meeting in Applied Algebra and Combinatorics - Partecipant</li>
+                        <li>$q$,$t$-Combinatorics in Algebra, Geometry and Topology in Cortona - Speaker</li>
+                    </ul>
+                </p>
+            </div>
+            <div class="card_course" id="start_page">
+                <h2>What to find on this page</h2>
+                <p>
+                    In this section I collected all the seminars and conferences I attended. On the left, you can find specific links to material I prepared for the talks.
+                    <br><br>
+                    This is a comprehensive list of the seminars that took place at University of Pisa. For a detailed description of the topics, you can go to the <a href="https://cult.dm.unipi.it/seminars/">CULT page</a>.
+                    <ul>
+                        <li>COSE 2022/23 ~ I and II semester: Combinatorial reciprocity theorems</li>
+                        <li>COSE 2023/24 ~ I semester: Matroid theory</li>
+                        <li>COSE 2023/24 ~ II semester: Hyperplane arrangements</li>
+                        <li>COSE 2024/25 ~ I semester: Sandpiles</li>
+                        <br>
+                        <li>ROSICO 2023/24 ~ II semester: Toric varieties</li>
+                        <li>ROSICO 2024/25 ~ I semester: Harmonics and graded Ehrhart theory</li>
+                    </ul>
+                    Since my first year as Master student, I attended different conferences where I got a chance to know many PhD students and researchers and discover new topics related to Combinatorics. These experiences are what definitely convinced me to look into an academic career, we will see where this will lead me!
+                    <br><br>
+                    Here I have a list of these conferences and graduate schools I have attended as a partecipant o a speaker.
+                    <ul>
+                        <li>Toblach 2024: Geometry, Algebra and Combinatorics of Moduli Spaces and Configurations VI - Partecipant</li>
+                        <li>GRADISCO 2024: Graduate International School in Combinatorics - Partecipant</li>
+                        <li>92nd SLC: Seminaire Lotharingien de Combinatoire - Partecipant</li>
+                        <li>GSMAAC 2025: Graduate Student Meeting in Applied Algebra and Combinatorics - Partecipant</li>
+                        <li>$q$,$t$-Combinatorics in Algebra, Geometry and Topology in Cortona - Speaker</li>
+                    </ul>
+                </p>
+            </div>
+
+            <div class="card_course" id="cose22">
+                <h2>COSE 2022 ~ I and II semester</h2>
+                <p>
+                    This seminar was centered around the book [BS] of which we've read the first three chapters.
+                    <br><br>
+                    I specifically gave a talk on Section 3.5 and 3.6 where face lattices of polyhedron are studied using Möbius functions from which one arrives at a proof for Zaslavski's theorem.
+                    <br><br>
+                    References:
+                    <ul>
+                        <li>[BS] M. Beck, R. Sanyal "Combinatorial reciprocity theorems: An invitation to enumerative geometric combinatorics", AMS, 2018</li>
+                    </ul>
+                </p>
+            </div>
+            <div class="card_course" id="cose23i">
+                <h2>COSE 2023 ~ I semester</h2>
+                <p>
+                    This seminar was focused on the basics of matroids. We followed some lecture notes by Victor Reiner [VR], reading about several axioms from which matroids can be defined and some elementary constructions.<br>
+                    I gave a talk on the definition of oriented matroids and ways to work with them using covectors and chirotopes (see Section 1.8, 1.9 and 1.10).
+                    <br><br>
+                    References:
+                    <ul>
+                        <li>[VR] V. Reiner "Lectures on matroids and oriented matroids" (Lecture notes)</li>
+                    </ul>
+                </p>
+            </div>
+            <div class="card_course" id="cose23ii">
+                <h2>COSE 2023 ~ II semester</h2>
+                <p>
+                    This seminar focused on hyperplane arrangements. We followed some lecture notes on the topic written by Richard Stanley.
+                    <br><br>
+                    In particular, I gave a talk on Zaslavski's Theorem that shows how to count the (bounded) regions of the hyperplane arrangement by means of the characteristic polynomial.<br>
+                    Here you can find my notes and an outline of my talk.
+                </p>
+                <a class="button1" href="cose23ii_notes.pdf">Seminar Notes</a>
+                <a class="button1" href="cose23ii_talk.pdf">Notes for my Talk</a>
+            </div>
+
+            <div class="card_course" id="rosico23ii">
+                <h2>ROSICO 2023 ~ II semester</h2>
+                <p>
+                    Some toric varieties can be constructed starting from a rational fan in $\mathbb{R}^d$.<br>
+                    Leveraging this explicit construction, one can use a combinatorial approach to describe the features of such toric varieties.<br>
+                    In particular, we focused on the Chow ring and its combinatorial counterpart, as an example of how a combinatorial structure can simplify computations and give a more intuitive point of view on a subject!
+                    <br><br>
+                    This seminar followed two references:
+                    <ul>
+                        <li>Simon Telen "Introduction to Toric Geometry" (Lecture Notes)</li>
+                        <li>Christoph Pegel "Chow Rings of Toric Varieties" (Master's Thesis)</li>
+                    </ul>
+                    Here you can find the notes I took throughout the semester.<br>
+                    I am particularly proud of the notes for my talk, in which I outline the bijection between the Chow ring and its combinatorial counterpart. I was not that comfortable with algebraic geometry yet, so I had to do quite some work to understand the subject well enough.
+                </p>
+                <a class="button1" href="rosico23ii_notes.pdf">Seminar Notes</a>
+                <a class="button1" href="rosico23ii_talk.pdf">Notes for my Talk</a>
+            </div>
+            <div class="card_course" id="rosico24i">
+                <h2>ROSICO 2024 ~ I semester</h2>
+                <p>
+                    Take a polytope in $\mathbb{R}^n$ with vertices on the integer lattice. What can we say about its volume? And the integer points contained in the polytope?<br>
+                    These are some of the questions posed by Ehrhart theory and they reveal interesting combinatorial and algebraic structures.<br>
+                    Motivated by some classical results, Victor Reiner and Brendon Rhoades try to find a q-analogue version of the Ehrhart series, a particular series that encodes a lot of information on the polytope itself. Some analogous results are conjectured for this q-analogue series and to try proving these a new algebraic structure is introduced: the Harmonic Algebra.<br>
+                    In [RR] properties of this Harmonic Algebra are studied, hoping to get a clearer picture on the main conjecture.
+                    <br><br>
+                    This seminar followed two references:
+                    <ul>
+                        <li>[RR] Victor Reiner, Brendon Rhoades "Harmonics and Graded Ehrhart Theory", arXiv, 2024</li>
+                    </ul>
+                    Here you can find the notes I took throughout the semester.<br>
+                    In my talk (you can find the notes below), I take a step back from the technical work on harmonic spaces, to recall and motivate the definition of the harmonic space $V_{\mathcal{Z}}$. From there, I define the harmonic algebra associated to a lattice politope and I state the conjectured properties of this structure. Finally, I show how these properties hold in the case of antiblocking lattice polytopes.
+                </p>
+                <a class="button1" href="rosico24i_notes.pdf">Seminar Notes</a>
+                <a class="button1" href="rosico24i_talk.pdf">Notes for my Talk</a>
+            </div>
+            <div class="card_course" id="cortona25">
+                <h2>$q$,$t$-Combinatorics in Algebra, Geometry and Topology in Cortona</h2>
+                <p>
+                    This meeting was organized to gather international experts in $q$,$t$-Combinatorics to work together and exchange ideas and different approaches.
+                    <br>
+                    As a student finishing its Master degree, I believe this experience gave me great insights and it let me meet several important researchers in the field.
+                    <br><br>
+                    <a href="https://qtcombinatoricsincortona.ulb.be/">Here</a> you can find the link to the meeting's website!
+                    <br><br>
+                    Actually, I was asked to attend the meeting as a speaker (for the first time!) to present a joint work with Prof. Michele D'Adderio on <a href="../research/research.html?specaddr=ratLR">sorted sandpiles and parking functions</a>.
+                    <br><br>
+                    <b>Title</b>: Sandpiles and pmaj for $\nabla^k e_n$
+                    <br>
+                    <b>Abstract</b>: In a recent article D’Adderio et al. introduced the new statistic “delay” on recurrent configurations of the sandpile model, providing a new combinatorial interpretation of the shuffle theorem of Carlsson and Mellit for $\nabla e_n$. They showed that the delay statistic corresponds to the “pmaj” introduced by Loehr and Remmel in their bijective (area,pmaj) reinterpretation of the bistatistic (dinv,area) for $\nabla e_n$. In this talk we present an extension of both the delay and the pmaj statistics, which leads to an upgrade of both the sandpile framework and the Loehr-Remmel bijection for $\nabla^k e_n$. This is joint work with Michele D’Adderio. 
+                </p>
+                <a class="button1" href="cortona25.pdf">Slides from the talk</a>
+            </div>
+
+<!--                                        TEMPLATE
+            <div class="card_course" id="">
+                <h2>TITLE</h2>
+                <p>
+                    DESCRIPTION
+                </p>
+                <a class="button1" href="#">BUTTON</a>
+            </div>
+-->
+        </div>
+    </div>
+
+    <!--        FOOTER              -->
+    <div class="footer">
+        <h3>Contact me</h3>
+        <p>
+            e-mail (institutional): a.sgubin@studenti.unipi.it<br><br>
+            e-mail (personal): alessiosgubin@gmail.com
+        </p>
+    </div>
+
+
+<!--    Script for hiding sidebar   -->
+<script>
+    //* Loop through all dropdown buttons to toggle between hiding and showing its dropdown content - This allows the user to have multiple dropdowns without any conflict */
+    var dropdown = document.getElementsByClassName("dropdown-btn");
+    var i;
+
+    for (i = 0; i < dropdown.length; i++) {
+    dropdown[i].addEventListener("click", function() {
+        this.classList.toggle("active");
+        var dropdownContent = this.nextElementSibling;
+        if (dropdownContent.style.display === "block") {
+        dropdownContent.style.display = "none";
+        } else {
+        dropdownContent.style.display = "block";
+        }
+    });
+    } 
+</script>
+
+<script>
+    // Reading localStorage for a specific page to open at the start
+    var passed_parameters = window.location.search;
+    var urlParams = new URLSearchParams(passed_parameters);
+    var current_card = urlParams.get('specaddr')
+    if (current_card === null) {
+        current_card = "start_page";
+    }
+    select_page(current_card)
+
+    // Defining the function that hide/draws the different cards
+    function select_page(id_page) {
+        var cards = document.getElementsByClassName("card_course");
+        for (i = 0; i < cards.length; i++) {
+            if (cards[i].id === id_page) {
+                cards[i].style.display = "block";
+                current_card = id_page;
+            }
+            else {
+                cards[i].style.display = "none";
+            }
+        }
+        document.getElementById("start_page").style.display = "none";
+    }
+</script>
+
+<!--    To use LaTeX    -->
+<script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-MML-AM_CHTML">
+</script><script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+    tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+    });
+</script>
+
+
+</body>
+

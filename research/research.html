@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<link rel="stylesheet" type="text/css" href="../style_stuff.css" />
+	<meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1.0"> 
+	<title>Web Page - Alessio Sgubin</title>
+</head>
+
+<body>
+    <!--        HEADER              -->
+	<div class="header">
+        <h1>Alessio Sgubin - WebPage</h1>
+        <p>Research</p>
+    </div>
+    
+    <!--        NAVIGATION BAR      -->
+    <div class="topnav">
+        <a href="../index.html">About me</a>
+        <a href="../research/research.html">Research</a>
+        <a href="../study_res/study_res.html">Study resources</a>
+        <a href="../projects/projects.html">Projects</a>
+        <a href="../seminars/seminars.html">Seminars and Conferences</a>
+        <a href="../other_stuff/other_stuff.html">Other stuff</a>
+    </div>
+
+    <!--        CONTENT             -->
+    <div class="row">
+        <div class="leftcolumn">
+            <div class="card">
+                <div class="sidenav">       <!--    SIDEBAR    -->
+                    <button class="button2" onclick="select_page('ratLR')">A rational Loehr-Remmel bijection and Sorted sandpiles</button>
+                    <button class="button2" onclick="select_page('newLR')">A new look into the Loehr-Remmel bijection</button>
+                </div> 
+            </div>
+        </div>
+        <div class="rightcolumn">
+            <div class="card" id="start_page">
+                <h2>What to find on this page</h2>
+                <p>
+                    Here you can find my research projects in Mathematics.
+                    <br><br>
+                    A comprehensive list of the articles I am working in:
+                    <ul>
+                        <li>M. D'Adderio, A.S. - A rational Loehr-Remmel bijection and Sorted sandpiles (In preparation...)</li>
+                        <li>M. D'Adderio, A.S. - A new look into the Loehr-Remmel bijection (In preparation...)</li>
+                    </ul>
+                    On the side menu you can find an abstract version of the papers listed above.
+                </p>
+            </div>
+            <div class="card_course" id="start_page">
+                <h2>What to find on this page</h2>
+                <p>
+                    Here you can find my research projects in Mathematics.
+                    <br><br>
+                    A comprehensive list of the articles I am working in:
+                    <ul>
+                        <li>M. D'Adderio, A.S. - A rational Loehr-Remmel bijection and Sorted sandpiles (still working on a publishable version...)</li>
+                        <li>M. D'Adderio, A.S. - A new look into the Loehr-Remmel bijection (still working on a publishable version...)</li>
+                    </ul>
+                    On the side menu you can find an abstract version of the papers listed above.
+                </p>
+            </div>
+            
+            <div class="card_course" id="newLR">
+                <h2>M. D'Adderio, A.S. - A new look into the Loehr-Remmel bijection</h2>
+                <p>
+                    <h3>Abstract</h3>
+                    The objective of this paper is to give a more intuitive interpretation to the Loehr-Remmel bijection.<br>
+                    More specifically, we try to give an explicit construction of the inverse map, which previously has only been described undirectly through intermediate classes of combinatorial objects.
+                </p>
+            </div>
+
+            <div class="card_course" id="ratLR">
+                <h2>M. D'Adderio, A.S. - A rational Loehr-Remmel bijection and Sorted sandpiles</h2>
+                <p>
+                    <h3>Abstract</h3>
+                    We introduce a generalized $\text{pmaj}$ statistic for $(nk,n)$-parking functions and prove the Loehr-Remmel bijection in this rational case.<br>
+                    This combinatorial class can also be interpreted in the Sorted Sandpile model with a new family of underlying graphs and bi-statistic $(\text{level},\text{delay})$.<br>
+                    With these objects we obtain two new formulation of the $(nk,n)$-Rational Shuffle Theorem.
+                </p>
+            </div>
+
+
+<!--                                        TEMPLATE
+            <div class="card_course" id="">
+                <h2>TITLE</h2>
+                <p>
+                    DESCRIPTION
+                </p>
+                <a class="button1" href="#">BUTTON</a>
+            </div>
+-->
+        </div>
+    </div>
+
+    <!--        FOOTER              -->
+    <div class="footer">
+        <h3>Contact me</h3>
+        <p>
+            e-mail (institutional): a.sgubin@studenti.unipi.it<br><br>
+            e-mail (personal): alessiosgubin@gmail.com
+        </p>
+    </div>
+
+
+<!--    Script for hiding sidebar   -->
+<script>
+    //* Loop through all dropdown buttons to toggle between hiding and showing its dropdown content - This allows the user to have multiple dropdowns without any conflict */
+    var dropdown = document.getElementsByClassName("dropdown-btn");
+    var i;
+
+    for (i = 0; i < dropdown.length; i++) {
+    dropdown[i].addEventListener("click", function() {
+        this.classList.toggle("active");
+        var dropdownContent = this.nextElementSibling;
+        if (dropdownContent.style.display === "block") {
+        dropdownContent.style.display = "none";
+        } else {
+        dropdownContent.style.display = "block";
+        }
+    });
+    } 
+</script>
+
+<script>
+    // Reading localStorage for a specific page to open at the start
+    var passed_parameters = window.location.search;
+    var urlParams = new URLSearchParams(passed_parameters);
+    var current_card = urlParams.get('specaddr')
+    if (current_card === null) {
+        current_card = "start_page";
+    }
+    select_page(current_card)
+
+    // Defining the function that hide/draws the different cards
+    function select_page(id_page) {
+        var cards = document.getElementsByClassName("card_course");
+        for (i = 0; i < cards.length; i++) {
+            if (cards[i].id === id_page) {
+                cards[i].style.display = "block";
+            }
+            else {
+                cards[i].style.display = "none";
+            }
+        }
+        document.getElementById("start_page").style.display = "none";
+    }
+</script>
+
+
+<!--    To use LaTeX    -->
+<script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-MML-AM_CHTML">
+</script><script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+    tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+    });
+</script>
+
+</body>
+

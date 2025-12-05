@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<link rel="stylesheet" type="text/css" href="../style_study.css" />
+	<meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1.0"> 
+	<title>Web Page - Alessio Sgubin</title>
+</head>
+
+<body>
+    <!--        HEADER              -->
+	<div class="header">
+        <h1>Alessio Sgubin - WebPage</h1>
+        <p>Study Resources</p>
+    </div>
+    
+    <!--        NAVIGATION BAR      -->
+    <div class="topnav">
+        <a href="../index.html">About me</a>
+        <a href="../research/research.html">Research</a>
+        <a href="../study_res/study_res.html">Study resources</a>
+        <a href="../projects/projects.html">Projects</a>
+        <a href="../seminars/seminars.html">Seminars and Conferences</a>
+        <a href="../other_stuff/other_stuff.html">Other stuff</a>
+    </div>
+
+    <!--        CONTENT             -->
+    <div class="row">
+        <div class="leftcolumn">
+            <div class="card">
+                <div class="sidenav">       <!--    SIDEBAR    -->
+                    <button class="dropdown-btn">Year 1<i class="fa fa-caret-down"></i></button>                <!--Year 1-->
+                    <div class="dropdown-container">
+                        <button class="button2" onclick="select_page('anal1')">Analysis 1</button>
+                        <button class="button2" onclick="select_page('lcmc')">LCMC</button>
+                        <button class="button2" onclick="select_page('geom1')">Geometry 1</button>
+                    </div>
+                    <button class="dropdown-btn">Year 2<i class="fa fa-caret-down"></i></button>                <!--Year 2-->
+                    <div class="dropdown-container">
+                        <button class="button2" onclick="select_page('anal2')">Analysis 2</button>
+                        <button class="button2" onclick="select_page('eps')">EPS</button>
+                        <button class="button2" onclick="select_page('geom2')">Geometry 2</button>
+                        <button class="button2" onclick="select_page('greps')">Groups and Representations</button>
+                    </div>
+                    <button class="dropdown-btn">Year 3<i class="fa fa-caret-down"></i></button>                <!--Year 3-->
+                    <div class="dropdown-container">
+                        <button class="button2" onclick="select_page('eta')">ETA</button>
+                        <button class="button2" onclick="select_page('phys2')">Physics 2</button>
+                        <button class="button2" onclick="select_page('phys3')">Physics 3</button>
+                        <button class="button2" onclick="select_page('ratmec')">Rational Mechanics</button>
+                    </div>
+                    <button class="dropdown-btn">Bachelor's Thesis<i class="fa fa-caret-down"></i></button>     <!--Bachelor's-->
+                    <div class="dropdown-container">
+                        <button class="button2" onclick="select_page('th_bac')">Thesis Material</button>
+                        <button class="button2" onclick="select_page('ph_bac')">On that day...</button>
+                    </div>
+                    <button class="dropdown-btn">Tutoring<i class="fa fa-caret-down"></i></button>              <!--Tutoring-->
+                    <div class="dropdown-container">
+                        <button class="button2" onclick="select_page('tutor_fis')">Geometry and Linear Algebra 2023 ~ Faculty of Physics</button>
+                        <button class="button2" onclick="select_page('tutor_arit')">Arithmetic 2024 ~ Faculty of Mathematics</button>
+                    </div>
+                    <button class="dropdown-btn">Year 4<i class="fa fa-caret-down"></i></button>                <!--Year 4-->
+                    <div class="dropdown-container">
+                        <button class="button2" onclick="select_page('istanal')">Institutions of Mathematical Analysis</button>
+                        <button class="button2" onclick="select_page('gac')">Algebraic Geometry C</button>
+                        <button class="button2" onclick="select_page('topers')">Topological Persistence</button>
+                    </div>
+                    <button class="dropdown-btn">Year 5<i class="fa fa-caret-down"></i></button>                <!--Year 5-->
+                    <div class="dropdown-container">
+                        <button class="button2" onclick="select_page('prob')">Probability</button>
+                    </div>
+                    <button class="dropdown-btn">Master's Thesis<i class="fa fa-caret-down"></i></button>       <!--Master's-->
+                    <div class="dropdown-container">
+                        <button class="button2" onclick="select_page('start_page')">We will see...</button>
+                    </div>
+                </div> 
+            </div>
+        </div>
+        <div class="rightcolumn">
+            <div class="card" id="start_page">
+                <h2>What to find on this page</h2>
+                <p>
+                    This is the menu from which to navigate all study resouces I have collected over the years.<br><br>
+                    In the menu you can find a list of courses, organized by year.
+                </p>
+            </div>
+            <div class="card_course" id="start_page">
+                <h2>What to find on this page</h2>
+                <p>
+                    This is the menu from which to navigate all study resouces I have collected over the years.<br><br>
+                    In the menu you can find a list of courses, organized by year.
+                </p>
+            </div>
+
+            <!--            COURSES: FIRST YEAR             -->
+
+            <div class="card_course" id="anal1">
+                <h2>Analysis 1</h2>
+                <p>
+                    Here you can find a summary of all the theory we studied in this course (in Italian).
+                </p>
+                <a class="button1" href="year1/anal1_facts.pdf">Fact Summary</a>
+            </div>
+            <div class="card_course" id="lcmc">
+                <h2>Computer Labs</h2>
+                <p>
+                    In this page we collect all the stuff we've done in LCMC, a computational laboratory.
+                </p>
+                <a class="button1" href="year1/esercitazione.html">Oldest WebPage</a>
+                <a class="button1" href="year1/formula.html">Formula</a>
+            </div>
+            <div class="card_course" id="geom1">
+                <h2>Geometry 1</h2>
+                <p>
+                    Here you can find a summary of all the theory we studied in this course (in Italian).
+                </p>
+                <a class="button1" href="year1/geom1_facts.pdf">Fact Summary</a>
+            </div>
+            
+            <!--            COURSES: SECOND YEAR             -->
+
+            <div class="card_course" id="anal2">
+                <h2>Analysis 2</h2>
+                <p>
+                    Here you can find the lecture notes (in Italian) for the Analysis 2 course given by Pietro Majer in 2022.<br><br>
+                    Honestly, this is one of my most precious works given the time and effort put into it, with the help of my friend Andrea Rocca!
+                </p>
+                <a class="button1" href="year2/anal2.pdf">Guida Galattica per Analisti</a>
+            </div>
+            <div class="card_course" id="eps">
+                <h2>Elements of Probability and Statistics</h2>
+                <p>
+                    Here you can find some scans of the longer proofs we had to study.
+                </p>
+                <a class="button1" href="year2/eps.pdf">Long Proofs</a>
+            </div>
+            <div class="card_course" id="geom2">
+                <h2>Geometry 2</h2>
+                <p>
+                    Given the vastness of this course, I decided to collect all the results in the following file (in Italian). It may be useful to prepare the oral exam!
+                </p>
+                <a class="button1" href="year2/geom2.pdf">Fact Summary</a>
+            </div>
+            <div class="card_course" id="greps">
+                <h2>Groups and Representations</h2>
+                <p>
+                    This course has a special place in my heart: it was the first opportunity to get to know combinatorics!<br><br>
+                    Here you can find some notes that I used to prepare for the exam. If you want some real lecture notes, look up Michele D'Adderio's lecture notes on the elearning page of the course! 
+                </p>
+                <a class="button1" href="year2/greps.pdf">Some notes...</a>
+            </div>
+
+            <!--            COURSES: THIRD YEAR             -->
+
+            <div class="card_course" id="eta">
+                <h2>Elements of Algebraic Topology</h2>
+                <p>
+                    During that year, I've written some lecture notes (in Italian).<br><br>
+                    Beware: there are MANY mistakes, eventually I will correct them all...
+                </p>
+                <a class="button1" href="year3/eta.pdf">Lecture Notes</a>
+            </div>
+            <div class="card_course" id="phys2">
+                <h2>Physics 2</h2>
+                <p>
+                    Here you can find a formulary for the written exam.
+                </p>
+                <a class="button1" href="year3/phys2.pdf">Fomulary</a>
+            </div>
+            <div class="card_course" id="phys3">
+                <h2>Physics 3</h2>
+                <p>
+                    Here you can find two versions of a formulary for the written exam (joint work with Andrea Rocca).<br>
+                    As you can see, the NSFW version has some more explanations and stuff, bring the other to the exam!
+                </p>
+                <a class="button1" href="year3/phys3_NSFW.pdf">Formulary NSFW</a>
+                <a class="button1" href="year3/phys3_SFW.pdf">Formulary SFW</a>
+            </div>
+            <div class="card_course" id="ratmec">
+                <h2>Rational Mechanics</h2>
+                <p>
+                    Too many formulae to remember? Here you can find something to help memorize them...
+                </p>
+                <a class="button1" href="year3/ratmec.pdf">Formulary</a>
+            </div>
+
+            <!--            COURSES: BACHELOR'S DEGREE             -->
+
+            <div class="card_course" id="th_bac">
+                <h2>Bachelor's Thesis</h2>
+                <p>
+                    In my Bachelor's Thesis I got to know some group representation theory and poset topology. In particular, I focused on two nice constuctions between simplicial complexes and finite posets.<br>
+                    From there, I get into poset (co)homology, EL-shellability and I explain how the action of the symmetric group translates to an action on the homology groups.<br>
+                    In the end, you can also find a study-case, the Boolean Algebra, which has a pretty nice combinatorial description.<br><br>
+                    Here you can find my work (in Italian)!
+                </p>
+                <a class="button1" href="bachelor/thesis_bachelor.pdf">Bachelor's Thesis</a>
+                <a class="button1" href="bachelor/thesis_presentation.pdf">Thesis Presentation</a>
+
+                <p>
+                    Do you like the template? You can download it clicking on the button below!
+                </p>
+                <a class="button1" href="bachelor/template_thesis.zip">Thesis Template</a>
+            </div>
+            <div class="card_course" id="ph_bac">
+                <h2>Some photos from my Bachelor's Degree discussion...</h2>
+                <p>
+                    Waiting for the photos to be printed...
+                </p>
+            </div>
+
+            <!--            COURSES: FOURTH YEAR             -->
+
+            <div class="card_course" id="istanal">
+                <h2>Institutions of Mathematical Analysis</h2>
+                <p>
+                    The lecture notes for Analysis 2 took all Andrea Rocca's and my energy. We ended up making just a summary (in Italian) of all results seen during the semester.
+                </p>
+                <a class="button1" href="year4/istanal.pdf">Fact Summary</a>
+            </div>
+            <div class="card_course" id="gac">
+                <h2>Algebraic Geometry C</h2>
+                <p>
+                    During my fourth year I partially transitioned to taking notes on a tablet. Why don't publish my notes alltogether?
+                </p>
+                <a class="button1" href="year4/gac.pdf">Lecture Notes</a>
+            </div>
+            <div class="card_course" id="topers">
+                <h2>Topological Persistence: theory and applications</h2>
+                <p>
+                    For this PhD course I was tasked with studying and presenting a published article on topological persistence.
+                    <br><br>
+                    To be more specific, the paper studies the so-called "space of Barcodes". In this context, barcodes encode information on persistence homology and - for example - they can be used as input in some machine learning pipelines.<br>
+                    There is a neat description that, through Coxeter group theory, links these barcode spaces with simplicial complexes and the double cosets of $A_n$.
+                    <br><br>
+                    Here you can find the material (in Italian) I used to present this work.
+                </p>
+                <a class="button1" href="year4/topers.pdf">Presentation</a>
+            </div>
+
+            <!--            COURSES: FIFTH YEAR             -->
+
+            <div class="card_course" id="prob">
+                <h2>Probability</h2>
+                <p>
+                    Here you can find some notes, collecting all the results we've seen.
+                </p>
+                <a class="button1" href="year5/prob.pdf">Fact Summary</a>
+                <a class="button1" href="year5/prob_booklet.pdf">Fact Summary (Booklet)</a>
+            </div>
+
+            <!--                TUTORING                    -->
+
+            <div class="card_course" id="tutor_fis">
+                <h2>Tutoring at Faculty of Physics ~ Geometry and Linear Algebra (2023 - 2024)</h2>
+                <p>
+                    Here you can find all the material I wrote for the students in Physics that attended the course Geometry and Linear Algebra (2023 - 2024).
+                </p>
+                <a class="button1" href="tutoring/fis_23-24/tutor_fis_note.pdf">Notes on an exercise (25_11_2023)</a>
+            </div>
+            <div class="card_course" id="tutor_arit">
+                <h2>Tutoring at Faculty of Mathematics ~ Arithmetic (2024 - 2025)</h2>
+                <p>
+                    Here you can find all the material I wrote for the students in Mathematics that attended the course Arithmetic (2024 - 2025).
+                </p>
+                <a class="button1" href="tutoring/arit_24-25/tutor_arith_note.pdf">Notes on cyclic groups (07_11_2024)</a>
+            </div>
+
+<!--                                        TEMPLATE
+            <div class="card_course" id="">
+                <h2>TITLE</h2>
+                <p>
+                    DESCRIPTION
+                </p>
+                <a class="button1" href="#">BUTTON</a>
+            </div>
+-->
+        </div>
+    </div>
+
+    <!--        FOOTER              -->
+    <div class="footer">
+        <h3>Contact me</h3>
+        <p>
+            e-mail (institutional): a.sgubin@studenti.unipi.it<br><br>
+            e-mail (personal): alessiosgubin@gmail.com
+        </p>
+    </div>
+
+
+<!--    Script for hiding sidebar   -->
+<script>
+    //* Loop through all dropdown buttons to toggle between hiding and showing its dropdown content - This allows the user to have multiple dropdowns without any conflict */
+    var dropdown = document.getElementsByClassName("dropdown-btn");
+    var i;
+
+    for (i = 0; i < dropdown.length; i++) {
+    dropdown[i].addEventListener("click", function() {
+        this.classList.toggle("active");
+        var dropdownContent = this.nextElementSibling;
+        if (dropdownContent.style.display === "block") {
+        dropdownContent.style.display = "none";
+        } else {
+        dropdownContent.style.display = "block";
+        }
+    });
+    } 
+</script>
+
+
+<script>
+    // Reading localStorage for a specific page to open at the start
+    var passed_parameters = window.location.search;
+    var urlParams = new URLSearchParams(passed_parameters);
+    var current_card = urlParams.get('specaddr')
+    if (current_card === null) {
+        current_card = "start_page";
+    }
+    select_page(current_card)
+
+    // Defining the function that hide/draws the different cards
+    function select_page(id_page) {
+        var cards = document.getElementsByClassName("card_course");
+        for (i = 0; i < cards.length; i++) {
+            if (cards[i].id === id_page) {
+                cards[i].style.display = "block";
+                current_card = id_page;
+            }
+            else {
+                cards[i].style.display = "none";
+            }
+        }
+        document.getElementById("start_page").style.display = "none";
+    }
+</script>
+
+<!--    To use LaTeX    -->
+<script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-MML-AM_CHTML">
+</script><script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+    tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+    });
+</script>
+
+
+</body>
+
