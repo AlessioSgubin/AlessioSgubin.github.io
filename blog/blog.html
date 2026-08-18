@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<link rel="stylesheet" type="text/css" href="../style_stuff.css" />
+	<meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1.0"> 
+	<title>Web Page - Alessio Sgubin</title>
+</head>
+
+<body>
+    <!--        HEADER              -->
+	<div class="header">
+        <h1>Alessio Sgubin - WebPage</h1>
+        <p>What's Combinatorics?</p>
+    </div>
+    
+    <!--        NAVIGATION BAR      -->
+    <div class="topnav">
+        <a href="../index.html">About me</a>
+        <a href="../research/research.html">Research</a>
+        <a href="../study_res/study_res.html">Study resources</a>
+        <a href="../projects/projects.html">Projects</a>
+        <a href="../seminars/seminars.html">Seminars and Conferences</a>
+        <a href="../other_stuff/other_stuff.html">Other stuff</a>
+    </div>
+
+    <!--        CONTENT             -->
+    <div class="row">
+        <div class="leftcolumn">
+            <div class="card">
+                <div class="sidenav">       <!--    SIDEBAR    -->
+                    <button class="button2" onclick="select_page('catalan')">Catalan Numbers</button>
+                </div> 
+            </div>
+        </div>
+        <div class="rightcolumn">
+            <div class="card" id="start_page">
+                <h2>What to find on this page</h2>
+                <p>
+                    Here you can find some introductory notions on Combinatorics! 
+                    <br><br>
+                    On the side menu you can find some pretty neat things to learn, good exploration!
+                </p>
+            </div>
+            <div class="card_course" id="start_page">
+                <h2>What to find on this page</h2>
+                <p>
+                    Here you can find some introductory notions on Combinatorics! 
+                    <br><br>
+                    On the side menu you can find some pretty neat things to learn, good exploration!
+                </p>
+            </div>
+            
+            <div class="card_course" id="catalan">
+                <h2>Work in progress...</h2>
+                <p>
+                    <h3>Catalan Numbers: TODO</h3>
+                </p>
+            </div>
+
+
+
+<!--                                        TEMPLATE
+            <div class="card_course" id="">
+                <h2>TITLE</h2>
+                <p>
+                    DESCRIPTION
+                </p>
+                <a class="button1" href="#">BUTTON</a>
+            </div>
+-->
+        </div>
+    </div>
+
+    <!--        FOOTER              -->
+    <div class="footer">
+        <h3>Contact me</h3>
+        <p>
+            e-mail (institutional): a.sgubin@studenti.unipi.it<br><br>
+            e-mail (personal): alessiosgubin@gmail.com
+        </p>
+    </div>
+
+
+<!--    Script for hiding sidebar   -->
+<script>
+    //* Loop through all dropdown buttons to toggle between hiding and showing its dropdown content - This allows the user to have multiple dropdowns without any conflict */
+    var dropdown = document.getElementsByClassName("dropdown-btn");
+    var i;
+
+    for (i = 0; i < dropdown.length; i++) {
+    dropdown[i].addEventListener("click", function() {
+        this.classList.toggle("active");
+        var dropdownContent = this.nextElementSibling;
+        if (dropdownContent.style.display === "block") {
+        dropdownContent.style.display = "none";
+        } else {
+        dropdownContent.style.display = "block";
+        }
+    });
+    } 
+</script>
+
+<script>
+    // Reading localStorage for a specific page to open at the start
+    var passed_parameters = window.location.search;
+    var urlParams = new URLSearchParams(passed_parameters);
+    var current_card = urlParams.get('specaddr')
+    if (current_card === null) {
+        current_card = "start_page";
+    }
+    select_page(current_card)
+
+    // Defining the function that hide/draws the different cards
+    function select_page(id_page) {
+        var cards = document.getElementsByClassName("card_course");
+        for (i = 0; i < cards.length; i++) {
+            if (cards[i].id === id_page) {
+                cards[i].style.display = "block";
+            }
+            else {
+                cards[i].style.display = "none";
+            }
+        }
+        document.getElementById("start_page").style.display = "none";
+    }
+</script>
+
+
+<!--    To use LaTeX    -->
+<script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-MML-AM_CHTML">
+</script><script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+    tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+    });
+</script>
+
+</body>
+
