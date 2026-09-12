@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scripts of the blog</title>
+
+    <style>
+        canvas {
+        border: 1px solid #aaa;
+        cursor: grab;
+        }
+
+        canvas:active {
+        cursor: grabbing;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+    <canvas id="canvas" width="1000" height="600"></canvas>
+</div>
+
+<script>
+    const canvas = document.getElementById("canvas");
+    const ctx = canvas.getContext("2d");
+
+    // List of the MODIFIABLE OBJECT
+    const objects = [
+        { type: "circle", x: 100, y: 200, radius: 25, label: "1", rotation: .5 * Math.PI, rot_system: [0,1] },
+        { type: "circle", x: 400, y: 200, radius: 25, label: "2", rotation: .5 * Math.PI, rot_system: [0,1,2] },
+        { type: "circle", x: 300, y: 400, radius: 25, label: "3", rotation:  0 * Math.PI, rot_system: [2] },
+    ];
+
+    const edges = [
+        { type: "edge", id: "E1", endpt1_idx: 0, endpt2_idx: 1, label: "1" },
+        { type: "edge", id: "E2", endpt1_idx: 0, endpt2_idx: 1, label: "2" },
+        { type: "edge", id: "E3", endpt1_idx: 1, endpt2_idx: 2, label: "3" },
+    ]
+
+
+    // List of the TARGET OBJECT
+    const objects_target = [
+        { type: "circle", x: 900, y: 400, radius: 25, label: "A", rotation: (.5) * Math.PI, rot_system: [0,1] },
+        { type: "circle", x: 500, y: 400, radius: 25, label: "B", rotation: (.5 + 2/9) * Math.PI, rot_system: [0,1,2] },
+        { type: "circle", x: 700, y: 400, radius: 25, label: "C", rotation:  11/9 * Math.PI, rot_system: [2] },
+    ];
+
+    const edges_target = [
+        { type: "edge", id: "E1", endpt1_idx: 0, endpt2_idx: 1, label: "1" },
+        { type: "edge", id: "E2", endpt1_idx: 0, endpt2_idx: 1, label: "2" },
+        { type: "edge", id: "E3", endpt1_idx: 1, endpt2_idx: 2, label: "3" },
+    ]
+
+    // Variables for the dragging and clicking functionalities
+    let dragging_obj = false;
+    let obj_dragged = 0;
+
+    // These are the offsets of the mouse with respect to the center of the dragged object
+    let offsetX = 0;
+    let offsetY = 0;
+
+    // We use this to see if we have moved the mouse (thus clicked) or not
+    let distXdown = 0;
+    let distYdown = 0;
+    let distXup = 0;
+    let distYup = 0;
+
+    // Draw everything
+    function draw_target() {
+        let mult_shift = 5
+
+        // Draw all edges
+        for (let j = edges_target.length - 1; j >= 0; j--) {
+            // Find the endpoints and the directions for edges
+            let x0 = objects_target[edges_target[j].endpt1_idx].x;
+            let y0 = objects_target[edges_target[j].endpt1_idx].y;
+            let x1 = objects_target[edges_target[j].endpt2_idx].x;
+            let y1 = objects_target[edges_target[j].endpt2_idx].y;
+
+            let angl0   = objects_target[edges_target[j].endpt1_idx].rotation + 2 * Math.PI * (objects_target[edges_target[j].endpt1_idx].rot_system.indexOf(j) / objects_target[edges_target[j].endpt1_idx].rot_system.length);
+            let shiftx0 = objects_target[edges_target[j].endpt1_idx].radius * Math.cos(angl0);
+            let shifty0 = objects_target[edges_target[j].endpt1_idx].radius * Math.sin(angl0);
+
+            let angl1   = objects_target[edges_target[j].endpt2_idx].rotation + 2 * Math.PI * (objects_target[edges_target[j].endpt2_idx].rot_system.indexOf(j) / objects_target[edges_target[j].endpt2_idx].rot_system.length);
+            let shiftx1 = objects_target[edges_target[j].endpt2_idx].radius * Math.cos(angl1);
+            let shifty1 = objects_target[edges_target[j].endpt2_idx].radius * Math.sin(angl1);
+            
+            // Draw the actual Bezier curve
+            ctx.beginPath();
+            ctx.moveTo(x0+shiftx0, y0+shifty0);
+            ctx.bezierCurveTo(x0+mult_shift*shiftx0, y0+mult_shift*shifty0, x1+mult_shift*shiftx1, y1+mult_shift*shifty1, x1, y1);
+
+            ctx.strokeStyle = "black";
+            ctx.stroke();
+        }
+
+        // Draw all circles
+        for (let i = objects_target.length - 1; i >= 0; i--) {
+            // Draw the circle itself
+            ctx.beginPath();
+            ctx.arc(objects_target[i].x, objects_target[i].y, objects_target[i].radius, 0, 2 * Math.PI);
+            ctx.fillStyle = "green";
+            ctx.fill();
+
+            // Draw the label
+            ctx.font = "40px Open Sans";
+            ctx.fillStyle = "white";
+            ctx.textBaseline = "middle";
+            ctx.textAlign = "center";
+            ctx.fillText(objects_target[i].label, objects_target[i].x, objects_target[i].y);
+        }
+    }
+
+    // Draw everything
+    function draw_object() {
+        let mult_shift = 5
+
+        // Draw all edges
+        for (let j = edges.length - 1; j >= 0; j--) {
+            // Find the endpoints and the directions for edges
+            let x0 = objects[edges[j].endpt1_idx].x;
+            let y0 = objects[edges[j].endpt1_idx].y;
+            let x1 = objects[edges[j].endpt2_idx].x;
+            let y1 = objects[edges[j].endpt2_idx].y;
+
+            let angl0 = objects[edges[j].endpt1_idx].rotation + 2 * Math.PI * (objects[edges[j].endpt1_idx].rot_system.indexOf(j) / objects[edges[j].endpt1_idx].rot_system.length);
+            let shiftx0 = objects[edges[j].endpt1_idx].radius * Math.cos(angl0);
+            let shifty0 = objects[edges[j].endpt1_idx].radius * Math.sin(angl0);
+
+            let angl1 = objects[edges[j].endpt2_idx].rotation + 2 * Math.PI * (objects[edges[j].endpt2_idx].rot_system.indexOf(j) / objects[edges[j].endpt2_idx].rot_system.length);
+            let shiftx1 = objects[edges[j].endpt2_idx].radius * Math.cos(angl1);
+            let shifty1 = objects[edges[j].endpt2_idx].radius * Math.sin(angl1);
+            
+            // Draw the actual Bezier curve
+            ctx.beginPath();
+            ctx.moveTo(x0+shiftx0, y0+shifty0);
+            ctx.bezierCurveTo(x0+mult_shift*shiftx0, y0+mult_shift*shifty0, x1+mult_shift*shiftx1, y1+mult_shift*shifty1, x1, y1);
+
+            ctx.strokeStyle = "black";
+            ctx.stroke();
+        }
+
+        // Draw all circles
+        for (let i = objects.length - 1; i >= 0; i--) {
+            // Draw the circle itself
+            ctx.beginPath();
+            ctx.arc(objects[i].x, objects[i].y, objects[i].radius, 0, 2 * Math.PI);
+            if (obj_dragged != i || dragging_obj == false) {
+                ctx.fillStyle = "blue";
+                ctx.fill();
+            } else {
+                ctx.fillStyle = "red";
+                ctx.fill();
+            }
+
+            // Draw the label
+            ctx.font = "40px Open Sans";
+            ctx.fillStyle = "white";
+            ctx.textBaseline = "middle";
+            ctx.textAlign = "center";
+            ctx.fillText(objects[i].label, objects[i].x, objects[i].y);
+        }
+    }
+
+    function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        draw_target();
+        draw_object();
+    }
+
+    // Mouse pressed
+    canvas.addEventListener("mousedown", (event) => {
+        const rect = canvas.getBoundingClientRect();
+
+        const mouseX = event.clientX - rect.left;
+        const mouseY = event.clientY - rect.top;
+
+        distXdown = mouseX
+        distYdown = mouseY
+
+        // Is the mouse inside a circle?
+        for (let i = objects.length - 1; i >= 0; i-- && dragging_obj == false) {
+            const dx = mouseX - objects[i].x;
+            const dy = mouseY - objects[i].y;
+
+            if (dx * dx + dy * dy <= objects[i].radius * objects[i].radius) {
+                dragging_obj = true;
+                obj_dragged = i
+
+                // Remember where inside the object we clicked
+                offsetX = mouseX - objects[i].x;
+                offsetY = mouseY - objects[i].y;
+            }
+        }
+    });
+
+
+    // Mouse moved
+    canvas.addEventListener("mousemove", (event) => {
+        if (!dragging_obj) return;
+
+        const rect = canvas.getBoundingClientRect();
+
+        const mouseX = event.clientX - rect.left;
+        const mouseY = event.clientY - rect.top;
+
+        objects[obj_dragged].x = mouseX - offsetX;
+        objects[obj_dragged].y = mouseY - offsetY;
+
+        draw();
+    });
+
+
+    // Mouse released
+    canvas.addEventListener("mouseup", () => {
+        dragging_obj = false;
+        obj_dragged = 0
+
+        draw();
+    });
+
+    // Mouse leaves the canvas
+    canvas.addEventListener("mouseleave", () => {
+        dragging_obj = false;
+        obj_dragged = 0
+
+        draw();
+    });
+
+    // Mouse clicks a vertex
+    canvas.addEventListener("click", (event) => {
+        const rect = canvas.getBoundingClientRect();
+
+        const mouseXclick = event.clientX - rect.left;
+        const mouseYclick = event.clientY - rect.top;
+
+        // Is the mouse inside a circle?
+        for (let i = objects.length - 1; i >= 0 && ( Math.abs(distXdown - mouseXclick) + Math.abs(distYdown - mouseYclick) ) < 10; i--) {
+            const dx = mouseXclick - objects[i].x;
+            const dy = mouseYclick - objects[i].y;
+
+            if (dx * dx + dy * dy <= objects[i].radius * objects[i].radius) {
+                objects[i].rotation += 2/9 * Math.PI;
+                draw();
+                return;         // with this, we don't rotate all vertices but only one if overlapped
+            }
+        }
+    });
+
+    draw();
+</script>
+
+</body>
+</html>

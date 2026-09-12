@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scripts of the blog</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: system-ui, sans-serif;
+            background: #111827;
+            color: white;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            width: min(900px, 95vw);
+            padding: 30px;
+        }
+
+        h1 {
+            font-size: 24px;
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        input {
+            width: 250px;
+        }
+
+        button {
+            padding: 8px 15px;
+            border: 0;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        svg {
+            width: 100%;
+            background: #f8fafc;
+            border-radius: 10px;
+        }
+
+        .axis {
+            stroke: #64748b;
+            stroke-width: 1.5;
+        }
+
+        .grid {
+            stroke: #e2e8f0;
+            stroke-width: 1;
+        }
+
+        .function {
+            fill: none;
+            stroke: #2563eb;
+            stroke-width: 4;
+        }
+
+        .tangent {
+            stroke: #ef4444;
+            stroke-width: 3;
+            stroke-dasharray: 8 6;
+        }
+
+        .point {
+            fill: #ef4444;
+            stroke: white;
+            stroke-width: 3;
+            cursor: grab;
+        }
+
+        .point:active {
+            cursor: grabbing;
+        }
+
+        text {
+            user-select: none;
+        }
+
+        #info {
+            color: #cbd5e1;
+            margin-top: 15px;
+        }
+
+        canvas {
+        border: 1px solid #aaa;
+        cursor: grab;
+        }
+
+        canvas:active {
+        cursor: grabbing;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>Interactive Tangent Visualization</h1>
+
+    <div class="controls">
+        <label>
+            x =
+            <input id="slider"
+                   type="range"
+                   min="-4"
+                   max="4"
+                   step="0.01"
+                   value="2">
+        </label>
+
+        <button id="animateButton">
+            Animate
+        </button>
+    </div>
+
+    <svg id="scene" viewBox="0 0 800 500">
+
+        <!-- Grid -->
+        <g id="grid"></g>
+
+        <!-- Axes -->
+        <line id="xAxis" class="axis"/>
+        <line id="yAxis" class="axis"/>
+
+        <!-- Function -->
+        <path id="function" class="function"/>
+
+        <!-- Tangent -->
+        <line id="tangent" class="tangent"/>
+
+        <!-- Point -->
+        <circle id="point" class="point" r="9"/>
+
+        <!-- Labels -->
+        <text id="pointLabel"
+              font-size="18"
+              fill="#111827"/>
+
+        <text x="720" y="250"
+              font-size="18"
+              fill="#111827">
+            x
+        </text>
+
+        <text x="405" y="40"
+              font-size="18"
+              fill="#111827">
+            y
+        </text>
+
+    </svg>
+
+
+
+
+    <h1>Interactive Circles</h1>
+
+    <div class="container">
+        <canvas id="canvas" width="800" height="500"></canvas>
+    </div>
+
+
+</div>
+
+
+
+
+<script>
+
+    //
+    // ------------------------------------------------------------
+    // 1. Mathematical model
+    // ------------------------------------------------------------
+    //
+
+    // Our function:
+    //
+    //                 x²
+    //        f(x) =  ----
+    //                  4
+    //
+
+    function f(x) {
+        return x * x / 4;
+    }
+
+
+    // Its derivative:
+    //
+    //        f'(x) = x / 2
+    //
+
+    function derivative(x) {
+        return x / 2;
+    }
+
+
+    //
+    // ------------------------------------------------------------
+    // 2. Coordinate system
+    // ------------------------------------------------------------
+    //
+
+    const svg = document.getElementById("scene");
+
+    const WIDTH = 800;
+    const HEIGHT = 500;
+
+    const X_MIN = -5;
+    const X_MAX = 5;
+
+    const Y_MIN = -1;
+    const Y_MAX = 7;
+
+
+    // Convert mathematical coordinates
+    // into SVG pixel coordinates.
+
+    function sx(x) {
+        return (x - X_MIN)
+            / (X_MAX - X_MIN)
+            * WIDTH;
+    }
+
+    function sy(y) {
+        return HEIGHT -
+            (y - Y_MIN)
+            / (Y_MAX - Y_MIN)
+            * HEIGHT;
+    }
+
+
+    //
+    // ------------------------------------------------------------
+    // 3. Draw grid
+    // ------------------------------------------------------------
+    //
+
+    const grid = document.getElementById("grid");
+
+    for (let x = X_MIN; x <= X_MAX; x++) {
+
+        const line = document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "line"
+        );
+
+        line.setAttribute("x1", sx(x));
+        line.setAttribute("x2", sx(x));
+        line.setAttribute("y1", 0);
+        line.setAttribute("y2", HEIGHT);
+
+        line.classList.add("grid");
+
+        grid.appendChild(line);
+    }
+
+
+    for (let y = Y_MIN; y <= Y_MAX; y++) {
+
+        const line = document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "line"
+        );
+
+        line.setAttribute("x1", 0);
+        line.setAttribute("x2", WIDTH);
+        line.setAttribute("y1", sy(y));
+        line.setAttribute("y2", sy(y));
+
+        line.classList.add("grid");
+
+        grid.appendChild(line);
+    }
+
+
+    //
+    // ------------------------------------------------------------
+    // 4. Draw axes
+    // ------------------------------------------------------------
+    //
+
+    const xAxis = document.getElementById("xAxis");
+    const yAxis = document.getElementById("yAxis");
+
+    xAxis.setAttribute("x1", sx(X_MIN));
+    xAxis.setAttribute("x2", sx(X_MAX));
+    xAxis.setAttribute("y1", sy(0));
+    xAxis.setAttribute("y2", sy(0));
+
+    yAxis.setAttribute("x1", sx(0));
+    yAxis.setAttribute("x2", sx(0));
+    yAxis.setAttribute("y1", sy(Y_MIN));
+    yAxis.setAttribute("y2", sy(Y_MAX));
+
+
+    //
+    // ------------------------------------------------------------
+    // 5. Draw function
+    // ------------------------------------------------------------
+    //
+
+    const functionPath =
+        document.getElementById("function");
+
+    let path = "";
+
+    const samples = 300;
+
+    for (let i = 0; i <= samples; i++) {
+
+        const x =
+            X_MIN +
+            (X_MAX - X_MIN) * i / samples;
+
+        const y = f(x);
+
+        const px = sx(x);
+        const py = sy(y);
+
+        if (i === 0) {
+            path += `M ${px} ${py}`;
+        } else {
+            path += ` L ${px} ${py}`;
+        }
+    }
+
+    functionPath.setAttribute("d", path);
+
+
+    //
+    // ------------------------------------------------------------
+    // 6. Interactive state
+    // ------------------------------------------------------------
+    //
+
+    let currentX = 2;
+
+    const point =
+        document.getElementById("point");
+
+    const tangent =
+        document.getElementById("tangent");
+
+    const pointLabel =
+        document.getElementById("pointLabel");
+
+    const slider =
+        document.getElementById("slider");
+
+    const info =
+        document.getElementById("info");
+
+
+    //
+    // ------------------------------------------------------------
+    // 7. Update the entire visualization
+    // ------------------------------------------------------------
+    //
+
+    function update() {
+
+        const x = currentX;
+        const y = f(x);
+        const slope = derivative(x);
+
+        //
+        // Move point
+        //
+
+        point.setAttribute("cx", sx(x));
+        point.setAttribute("cy", sy(y));
+
+
+        //
+        // Tangent equation:
+        //
+        // y = f(a) + f'(a)(x-a)
+        //
+
+        const x1 = X_MIN;
+        const x2 = X_MAX;
+
+        const y1 =
+            y + slope * (x1 - x);
+
+        const y2 =
+            y + slope * (x2 - x);
+
+
+        tangent.setAttribute("x1", sx(x1));
+        tangent.setAttribute("y1", sy(y1));
+
+        tangent.setAttribute("x2", sx(x2));
+        tangent.setAttribute("y2", sy(y2));
+
+
+        //
+        // Point label
+        //
+
+        pointLabel.setAttribute(
+            "x",
+            sx(x) + 12
+        );
+
+        pointLabel.setAttribute(
+            "y",
+            sy(y) - 12
+        );
+
+        pointLabel.textContent =
+            `(${x.toFixed(2)}, ${y.toFixed(2)})`;
+
+
+        //
+        // Information below graph
+        //
+
+        info.innerHTML =
+            `<strong>f(x) = x² / 4</strong>
+            &nbsp;&nbsp;
+            f'(${x.toFixed(2)}) = ${slope.toFixed(2)}`;
+
+
+        //
+        // Keep slider synchronized
+        //
+
+        slider.value = currentX;
+    }
+
+
+    //
+    // ------------------------------------------------------------
+    // 8. Slider interaction
+    // ------------------------------------------------------------
+    //
+
+    slider.addEventListener("input", () => {
+
+        currentX =
+            Number(slider.value);
+
+        update();
+    });
+
+
+    //
+    // ------------------------------------------------------------
+    // 9. Dragging the point
+    // ------------------------------------------------------------
+    //
+
+    let dragging = false;
+
+    point.addEventListener(
+        "pointerdown",
+        event => {
+
+            dragging = true;
+
+            point.setPointerCapture(
+                event.pointerId
+            );
+        }
+    );
+
+
+    point.addEventListener(
+        "pointermove",
+        event => {
+
+            if (!dragging) return;
+
+            //
+            // Convert mouse position into SVG coordinates
+            //
+
+            const rect =
+                svg.getBoundingClientRect();
+
+            const px =
+                (event.clientX - rect.left)
+                / rect.width
+                * WIDTH;
+
+            //
+            // Convert SVG x back to mathematical x
+            //
+
+            let x =
+                X_MIN +
+                px / WIDTH
+                * (X_MAX - X_MIN);
+
+            //
+            // Clamp x
+            //
+
+            x = Math.max(
+                X_MIN,
+                Math.min(X_MAX, x)
+            );
+
+            currentX = x;
+
+            update();
+        }
+    );
+
+
+    point.addEventListener(
+        "pointerup",
+        () => {
+            dragging = false;
+        }
+    );
+
+
+    //
+    // ------------------------------------------------------------
+    // 10. Animation
+    // ------------------------------------------------------------
+    //
+
+    const animateButton =
+        document.getElementById("animateButton");
+
+    let animationRunning = false;
+
+    animateButton.addEventListener(
+        "click",
+        () => {
+
+            if (animationRunning) return;
+
+            animationRunning = true;
+
+            const startX = -4;
+            const endX = 4;
+
+            const duration = 3000;
+
+            const startTime =
+                performance.now();
+
+
+            function animate(time) {
+
+                const elapsed =
+                    time - startTime;
+
+                const progress =
+                    Math.min(
+                        elapsed / duration,
+                        1
+                    );
+
+
+                //
+                // Smooth easing
+                //
+
+                const eased =
+                    progress < 0.5
+                    ? 2 * progress * progress
+                    : 1 -
+                    Math.pow(
+                        -2 * progress + 2,
+                        2
+                    ) / 2;
+
+
+                currentX =
+                    startX +
+                    (endX - startX) * eased;
+
+                update();
+
+
+                if (progress < 1) {
+
+                    requestAnimationFrame(
+                        animate
+                    );
+
+                } else {
+
+                    animationRunning = false;
+                }
+            }
+
+
+            requestAnimationFrame(animate);
+        }
+    );
+
+
+    // Initial render
+    update();
+
+</script>
+
+
+
+<script>
+    const canvas = document.getElementById("canvas");
+    const ctx = canvas.getContext("2d");
+
+    // List of the object we want
+    const objects = [
+        { type: "circle", x: 100, y: 100, radius: 25, label: "1", rotation: 0, rot_system: [0,1] },
+        { type: "circle", x: 300, y: 200, radius: 25, label: "2", rotation: 0, rot_system: [0,1] },
+        { type: "circle", x: 500, y: 300, radius: 25, label: "3", rotation: 0, rot_system: [] },
+    ];
+
+    const edges = [
+        { type: "edge", id: "E1", endpt1_idx: 0, endpt2_idx: 1, label: "1" },
+        { type: "edge", id: "E2", endpt1_idx: 0, endpt2_idx: 1, label: "2" },
+    ]
+
+
+    // List of the object we want
+    const objects_target = [
+        { type: "circle", x: 100, y: 100, radius: 25, label: "1", rotation: 0, rot_system: [0,1] },
+        { type: "circle", x: 300, y: 200, radius: 25, label: "2", rotation: 0, rot_system: [0,1] },
+        { type: "circle", x: 500, y: 300, radius: 25, label: "3", rotation: 0, rot_system: [] },
+    ];
+
+    const edges_target = [
+        { type: "edge", id: "E1", endpt1_idx: 0, endpt2_idx: 1, label: "1" },
+        { type: "edge", id: "E2", endpt1_idx: 0, endpt2_idx: 1, label: "2" },
+    ]
+
+    // Variables for the dragging and clicking functionalities
+    let dragging_obj = false;
+    let obj_dragged = 0;
+
+    // These are the offsets of the mouse with respect to the center of the dragged object
+    let offsetX = 0;
+    let offsetY = 0;
+
+    // We use this to see if we have moved the mouse (thus clicked) or not
+    let distXdown = 0;
+    let distYdown = 0;
+    let distXup = 0;
+    let distYup = 0;
+
+    // Draw everything
+    function draw_target() {
+        let mult_shift = 10
+
+        // Draw all edges
+        for (let j = edges_target.length - 1; j >= 0; j--) {
+            // Find the endpoints and the directions for edges
+            let x0 = objects_target[edges_target[j].endpt1_idx].x;
+            let y0 = objects_target[edges_target[j].endpt1_idx].y;
+            let x1 = objects_target[edges_target[j].endpt2_idx].x;
+            let y1 = objects_target[edges_target[j].endpt2_idx].y;
+
+            let angl0   = objects_target[edges_target[j].endpt1_idx].rotation + 2 * Math.PI * (objects_target[edges_target[j].endpt1_idx].rot_system.indexOf(j) / objects_target[edges_target[j].endpt1_idx].rot_system.length);
+            let shiftx0 = objects_target[edges_target[j].endpt1_idx].radius * Math.cos(angl0);
+            let shifty0 = objects_target[edges_target[j].endpt1_idx].radius * Math.sin(angl0);
+
+            let angl1   = objects_target[edges_target[j].endpt2_idx].rotation + 2 * Math.PI * (objects_target[edges_target[j].endpt2_idx].rot_system.indexOf(j) / objects_target[edges_target[j].endpt2_idx].rot_system.length);
+            let shiftx1 = objects_target[edges_target[j].endpt2_idx].radius * Math.cos(angl1);
+            let shifty1 = objects_target[edges_target[j].endpt2_idx].radius * Math.sin(angl1);
+            
+            // Draw the actual Bezier curve
+            ctx.beginPath();
+            ctx.moveTo(x0+shiftx0, y0+shifty0);
+            ctx.bezierCurveTo(x0+mult_shift*shiftx0, y0+mult_shift*shifty0, x1+mult_shift*shiftx1, y1+mult_shift*shifty1, x1, y1);
+
+            ctx.strokeStyle = "white";
+            ctx.stroke();
+        }
+
+        // Draw all circles
+        for (let i = objects_target.length - 1; i >= 0; i--) {
+            // Draw the circle itself
+            ctx.beginPath();
+            ctx.arc(objects_target[i].x, objects_target[i].y, objects_target[i].radius, 0, 2 * Math.PI);
+            ctx.fillStyle = "green";
+            ctx.fill();
+
+            // Draw the label
+            ctx.font = "40px Open Sans";
+            ctx.fillStyle = "white";
+            ctx.textBaseline = "middle";
+            ctx.textAlign = "center";
+            ctx.fillText(objects_target[i].label, objects_target[i].x, objects_target[i].y);
+        }
+    }
+
+    // Draw everything
+    function draw_object() {
+        let mult_shift = 10
+
+        // Draw all edges
+        for (let j = edges.length - 1; j >= 0; j--) {
+            // Find the endpoints and the directions for edges
+            let x0 = objects[edges[j].endpt1_idx].x;
+            let y0 = objects[edges[j].endpt1_idx].y;
+            let x1 = objects[edges[j].endpt2_idx].x;
+            let y1 = objects[edges[j].endpt2_idx].y;
+
+            let angl0 = objects[edges[j].endpt1_idx].rotation + 2 * Math.PI * (objects[edges[j].endpt1_idx].rot_system.indexOf(j) / objects[edges[j].endpt1_idx].rot_system.length);
+            let shiftx0 = objects[edges[j].endpt1_idx].radius * Math.cos(angl0);
+            let shifty0 = objects[edges[j].endpt1_idx].radius * Math.sin(angl0);
+
+            let angl1 = objects[edges[j].endpt2_idx].rotation + 2 * Math.PI * (objects[edges[j].endpt2_idx].rot_system.indexOf(j) / objects[edges[j].endpt2_idx].rot_system.length);
+            let shiftx1 = objects[edges[j].endpt2_idx].radius * Math.cos(angl1);
+            let shifty1 = objects[edges[j].endpt2_idx].radius * Math.sin(angl1);
+            
+            // Draw the actual Bezier curve
+            ctx.beginPath();
+            ctx.moveTo(x0+shiftx0, y0+shifty0);
+            ctx.bezierCurveTo(x0+mult_shift*shiftx0, y0+mult_shift*shifty0, x1+mult_shift*shiftx1, y1+mult_shift*shifty1, x1, y1);
+
+            ctx.strokeStyle = "white";
+            ctx.stroke();
+        }
+
+        // Draw all circles
+        for (let i = objects.length - 1; i >= 0; i--) {
+            // Draw the circle itself
+            ctx.beginPath();
+            ctx.arc(objects[i].x, objects[i].y, objects[i].radius, 0, 2 * Math.PI);
+            if (obj_dragged != i || dragging_obj == false) {
+                ctx.fillStyle = "blue";
+                ctx.fill();
+            } else {
+                ctx.fillStyle = "red";
+                ctx.fill();
+            }
+
+            // Draw the label
+            ctx.font = "40px Open Sans";
+            ctx.fillStyle = "white";
+            ctx.textBaseline = "middle";
+            ctx.textAlign = "center";
+            ctx.fillText(objects[i].label, objects[i].x, objects[i].y);
+        }
+    }
+
+    function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        draw_target();
+        draw_object();
+    }
+
+    // Mouse pressed
+    canvas.addEventListener("mousedown", (event) => {
+        const rect = canvas.getBoundingClientRect();
+
+        const mouseX = event.clientX - rect.left;
+        const mouseY = event.clientY - rect.top;
+
+        distXdown = mouseX
+        distYdown = mouseY
+
+        // Is the mouse inside a circle?
+        for (let i = objects.length - 1; i >= 0; i-- && dragging_obj == false) {
+            const dx = mouseX - objects[i].x;
+            const dy = mouseY - objects[i].y;
+
+            if (dx * dx + dy * dy <= objects[i].radius * objects[i].radius) {
+                dragging_obj = true;
+                obj_dragged = i
+
+                // Remember where inside the object we clicked
+                offsetX = mouseX - objects[i].x;
+                offsetY = mouseY - objects[i].y;
+            }
+        }
+    });
+
+
+    // Mouse moved
+    canvas.addEventListener("mousemove", (event) => {
+        if (!dragging_obj) return;
+
+        const rect = canvas.getBoundingClientRect();
+
+        const mouseX = event.clientX - rect.left;
+        const mouseY = event.clientY - rect.top;
+
+        objects[obj_dragged].x = mouseX - offsetX;
+        objects[obj_dragged].y = mouseY - offsetY;
+
+        draw();
+    });
+
+
+    // Mouse released
+    canvas.addEventListener("mouseup", () => {
+        dragging_obj = false;
+        obj_dragged = 0
+
+        draw();
+    });
+
+    // Mouse leaves the canvas
+    canvas.addEventListener("mouseleave", () => {
+        dragging_obj = false;
+        obj_dragged = 0
+
+        draw();
+    });
+
+    // Mouse clicks a vertex
+    canvas.addEventListener("click", (event) => {
+        if (dragging_obj) return;
+
+        const rect = canvas.getBoundingClientRect();
+
+        const mouseX = event.clientX - rect.left;
+        const mouseY = event.clientY - rect.top;
+
+        // Is the mouse inside a circle?
+        for (let i = objects.length - 1; i >= 0 && ( Math.abs(distXdown - mouseX) + Math.abs(distYdown - mouseY) ) < 10; i--) {
+            const dx = mouseX - objects[i].x;
+            const dy = mouseY - objects[i].y;
+
+            if (dx * dx + dy * dy <= objects[i].radius * objects[i].radius) {
+                objects[i].rotation += 2/9 * Math.PI;
+                return;         // with this, we don't rotate all vertices but only one if overlapped
+            }
+        }
+    });
+
+    draw();
+</script>
+
+
+</body>
+</html>
