@@ -7,12 +7,15 @@
 
     <style>
         canvas {
-        border: 1px solid #aaa;
-        cursor: grab;
+            border: 1px solid #aaa;
+            cursor: grab;
+            touch-action: none;
+            user-select: none;
+            -webkit-user-select: none;
         }
 
         canvas:active {
-        cursor: grabbing;
+            cursor: grabbing;
         }
     </style>
 </head>
@@ -20,18 +23,27 @@
 <body>
 
 <div class="container">
-    <canvas id="canvas" width="1000" height="600"></canvas>
+    <canvas id="canvas"></canvas>
 </div>
 
 <script>
     const canvas = document.getElementById("canvas");
     const ctx = canvas.getContext("2d");
 
+    // Resize window
+    const ratio = 0.6;
+    canvas.width = 0.9 * window.innerWidth;
+    canvas.height = ratio * window.innerWidth;    
+
+    const scaling = canvas.width / 1000;
+
+    let labelFontSize = 20 * scaling;
+
     // List of the MODIFIABLE OBJECT
     const objects = [
-        { type: "circle", x: 100, y: 200, radius: 25, label: "1", rotation: .5 * Math.PI, rot_system: [0,1] },
-        { type: "circle", x: 400, y: 200, radius: 25, label: "2", rotation: .5 * Math.PI, rot_system: [0,1,2] },
-        { type: "circle", x: 300, y: 400, radius: 25, label: "3", rotation:  0 * Math.PI, rot_system: [2] },
+        { type: "circle", x: 100*scaling, y: 200*scaling, radius: 25*scaling, label: "1", color_border: "#0000FF", color_fill: "#6666FF", rotation: .5 * Math.PI, rot_system: [0,1] },
+        { type: "circle", x: 400*scaling, y: 200*scaling, radius: 25*scaling, label: "2", color_border: "#0000FF", color_fill: "#6666FF", rotation: .5 * Math.PI, rot_system: [0,1,2] },
+        { type: "circle", x: 300*scaling, y: 400*scaling, radius: 25*scaling, label: "3", color_border: "#0000FF", color_fill: "#6666FF", rotation:  0 * Math.PI, rot_system: [2] },
     ];
 
     const edges = [
@@ -41,11 +53,11 @@
     ]
 
 
-    // List of the TARGET OBJECT
+    // List of the FIXED OBJECT
     const objects_target = [
-        { type: "circle", x: 900, y: 400, radius: 25, label: "A", rotation: (.5) * Math.PI, rot_system: [0,1] },
-        { type: "circle", x: 500, y: 400, radius: 25, label: "B", rotation: (.5 + 2/9) * Math.PI, rot_system: [0,1,2] },
-        { type: "circle", x: 700, y: 400, radius: 25, label: "C", rotation:  11/9 * Math.PI, rot_system: [2] },
+        { type: "circle", x: 900*scaling, y: 400*scaling, radius: 25*scaling, label: "A", color_border: "green", color_fill: "#66FF66", rotation: (.5) * Math.PI, rot_system: [0,1] },
+        { type: "circle", x: 500*scaling, y: 400*scaling, radius: 25*scaling, label: "B", color_border: "green", color_fill: "#66FF66", rotation: (.5 + 2/9) * Math.PI, rot_system: [0,1,2] },
+        { type: "circle", x: 700*scaling, y: 400*scaling, radius: 25*scaling, label: "C", color_border: "green", color_fill: "#66FF66", rotation:  11/9 * Math.PI, rot_system: [2] },
     ];
 
     const edges_target = [
@@ -68,11 +80,14 @@
     let distXup = 0;
     let distYup = 0;
 
-    // Draw everything
+    //      DRAWING FUNCTIONS
+    //
+    // Draw fixed
     function draw_target() {
         let mult_shift = 5
-
+        
         // Draw all edges
+        ctx.lineWidth = 3;
         for (let j = edges_target.length - 1; j >= 0; j--) {
             // Find the endpoints and the directions for edges
             let x0 = objects_target[edges_target[j].endpt1_idx].x;
@@ -98,15 +113,18 @@
         }
 
         // Draw all circles
+        ctx.lineWidth = 5;
         for (let i = objects_target.length - 1; i >= 0; i--) {
             // Draw the circle itself
             ctx.beginPath();
             ctx.arc(objects_target[i].x, objects_target[i].y, objects_target[i].radius, 0, 2 * Math.PI);
-            ctx.fillStyle = "green";
+            ctx.fillStyle = objects_target[i].color_fill;
             ctx.fill();
+            ctx.strokeStyle = objects_target[i].color_border;
+            ctx.stroke();
 
             // Draw the label
-            ctx.font = "40px Open Sans";
+            ctx.font = `${labelFontSize}px Open Sans`;
             ctx.fillStyle = "white";
             ctx.textBaseline = "middle";
             ctx.textAlign = "center";
@@ -114,11 +132,13 @@
         }
     }
 
-    // Draw everything
+    // Draw movable
     function draw_object() {
         let mult_shift = 5
 
+        
         // Draw all edges
+        ctx.lineWidth = 3;
         for (let j = edges.length - 1; j >= 0; j--) {
             // Find the endpoints and the directions for edges
             let x0 = objects[edges[j].endpt1_idx].x;
@@ -144,20 +164,23 @@
         }
 
         // Draw all circles
+        ctx.lineWidth = 5;
         for (let i = objects.length - 1; i >= 0; i--) {
             // Draw the circle itself
             ctx.beginPath();
             ctx.arc(objects[i].x, objects[i].y, objects[i].radius, 0, 2 * Math.PI);
             if (obj_dragged != i || dragging_obj == false) {
-                ctx.fillStyle = "blue";
+                ctx.fillStyle = objects[i].color_fill;
                 ctx.fill();
+                ctx.strokeStyle = objects[i].color_border;
+                ctx.stroke();
             } else {
                 ctx.fillStyle = "red";
                 ctx.fill();
             }
 
             // Draw the label
-            ctx.font = "40px Open Sans";
+            ctx.font = `${labelFontSize}px Open Sans`;
             ctx.fillStyle = "white";
             ctx.textBaseline = "middle";
             ctx.textAlign = "center";
@@ -165,6 +188,7 @@
         }
     }
 
+    // Draw all
     function draw() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -172,8 +196,10 @@
         draw_object();
     }
 
-    // Mouse pressed
-    canvas.addEventListener("mousedown", (event) => {
+    //      INPUT MANAGEMENT
+    //
+    // Object click
+    function obj_click(event) {
         const rect = canvas.getBoundingClientRect();
 
         const mouseX = event.clientX - rect.left;
@@ -189,18 +215,19 @@
 
             if (dx * dx + dy * dy <= objects[i].radius * objects[i].radius) {
                 dragging_obj = true;
-                obj_dragged = i
+                obj_dragged = i;
 
-                // Remember where inside the object we clicked
+                // Preserve pointer events throughout the drag
+                canvas.setPointerCapture(event.pointerId);
+
                 offsetX = mouseX - objects[i].x;
                 offsetY = mouseY - objects[i].y;
             }
         }
-    });
+    }
 
-
-    // Mouse moved
-    canvas.addEventListener("mousemove", (event) => {
+    // Object move
+    function obj_move(event) {
         if (!dragging_obj) return;
 
         const rect = canvas.getBoundingClientRect();
@@ -212,27 +239,26 @@
         objects[obj_dragged].y = mouseY - offsetY;
 
         draw();
-    });
+    }
 
-
-    // Mouse released
-    canvas.addEventListener("mouseup", () => {
+    // Object release
+    function obj_release() {
         dragging_obj = false;
         obj_dragged = 0
 
         draw();
-    });
+    }
 
-    // Mouse leaves the canvas
-    canvas.addEventListener("mouseleave", () => {
+    // Mouse left
+    function mouse_left() {
         dragging_obj = false;
         obj_dragged = 0
 
         draw();
-    });
+    }
 
-    // Mouse clicks a vertex
-    canvas.addEventListener("click", (event) => {
+    // Click rotation
+    function obj_rotation(event) {
         const rect = canvas.getBoundingClientRect();
 
         const mouseXclick = event.clientX - rect.left;
@@ -249,7 +275,25 @@
                 return;         // with this, we don't rotate all vertices but only one if overlapped
             }
         }
-    });
+    }
+
+
+    //      EVENT LISTENERS
+    //
+    // Mouse pressed
+    canvas.addEventListener("pointerdown", obj_click, {passive: false});
+    
+    // Mouse moved
+    canvas.addEventListener("pointermove", obj_move, {passive: false});
+    
+    // Mouse released
+    canvas.addEventListener("pointerup", obj_release, {passive: false});
+    
+    // Mouse leaves the canvas
+    canvas.addEventListener("pointercancel", mouse_left);
+    
+    // Mouse clicks a vertex
+    canvas.addEventListener("click", obj_rotation);
 
     draw();
 </script>
