@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editor of Combinatorial Maps</title>
+
+    <style>
+        * { box-sizing: border-box; }
+        html, body {
+            width: 100%; height: 100%; margin: 0; overflow: hidden;
+            font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background: #f4f6f8; color: #172033;
+        }
+        .app-shell { width: 100vw; height: 100dvh; position: relative; overflow: hidden; }
+        .floating-menu {
+            position: fixed; z-index: 10; top: 16px; left: 50%; transform: translateX(-50%);
+            display: flex; align-items: center; gap: 8px; max-width: calc(100vw - 24px);
+            padding: 9px 12px; border: 1px solid rgba(255,255,255,.75); border-radius: 16px;
+            background: rgba(255,255,255,.88); backdrop-filter: blur(16px);
+            box-shadow: 0 8px 30px rgba(20,32,55,.14); overflow-x: auto;
+            scrollbar-width: none; white-space: nowrap;
+        }
+        .floating-menu::-webkit-scrollbar { display: none; }
+        .menu-brand { font-size: 13px; font-weight: 750; letter-spacing: .02em; padding: 0 10px 0 3px; }
+        .menu-divider { width: 1px; height: 25px; background: #dce1e8; flex: 0 0 auto; margin: 0 2px; }
+        .menu-button {
+            border: 1px solid #dce2eb; background: #fff; color: #263248; border-radius: 10px;
+            padding: 9px 12px; font: inherit; font-size: 12px; font-weight: 650; cursor: pointer;
+            transition: background .15s, border-color .15s, transform .15s;
+        }
+        .menu-button:hover { background: #f0f4fa; border-color: #b9c5d6; }
+        .menu-button:active { transform: translateY(1px); }
+        .menu-button.primary { background: #263b65; border-color: #263b65; color: white; }
+        .menu-button.primary:hover { background: #1b2d51; }
+        .snap-control {
+            display: inline-flex; align-items: center; gap: 7px; padding: 8px 10px;
+            border: 1px solid #dce2eb; border-radius: 10px; background: #fff;
+            color: #263248; font-size: 12px; font-weight: 650; cursor: pointer;
+        }
+        .snap-control input { width: 15px; height: 15px; margin: 0; accent-color: #263b65; cursor: pointer; }
+        .workspace { position: absolute; inset: 0; }
+        canvas {
+            display: block; width: 100%; height: 100%; border: 0; cursor: grab;
+            touch-action: none; user-select: none; -webkit-user-select: none;
+        }
+        canvas:active { cursor: grabbing; }
+        .hint {
+            position: fixed; z-index: 5; left: 18px; bottom: 16px; padding: 10px 13px;
+            border: 1px solid #e0e5ec; border-radius: 12px; background: rgba(255,255,255,.82);
+            color: #657087; font-size: 12px; box-shadow: 0 4px 16px rgba(20,32,55,.06);
+            pointer-events: none;
+        }
+        @media (max-width: 640px) {
+            .floating-menu { top: 10px; padding: 7px; gap: 6px; border-radius: 13px; }
+            .menu-brand { display: none; }
+            .menu-button { padding: 9px 10px; }
+            .hint { left: 10px; bottom: 10px; font-size: 11px; }
+        }
+    </style>
+</head>
+
+<body>
+<div class="app-shell">
+    <!-- Floating toolbar: add future functionality buttons here. -->
+    <nav class="floating-menu" aria-label="Main toolbar">
+        <div class="menu-brand">Combinatorial Maps</div>
+        <div class="menu-divider" aria-hidden="true"></div>
+        <button class="menu-button primary" id="resetViewButton" type="button">Reset map</button>
+        <label class="snap-control" title="Snap dragged vertices to grid intersections">
+            <input id="snapToggle" type="checkbox">
+            <span>Snap</span>
+        </label>
+        <div class="menu-divider" aria-hidden="true"></div>
+        <label class="snap-control" title="Allow only for movements of the screen and zoom">
+            <input id="snapToggle" type="checkbox">
+            <span>Navigation mode</span>
+        </label>
+        <!-- Add new functionality buttons inside this nav element. -->
+    </nav>
+    <main class="workspace">
+        <canvas id="canvas" aria-label="Interactive combinatorial map editor"></canvas>
+    </main>
+    <div class="hint">Drag vertices to move them · Click a vertex to rotate it</div>
+</div>
+
+<script>
+    const canvas = document.getElementById("canvas");
+    const ctx = canvas.getContext("2d");
+
+    // The drawing uses a stable 1000 × 600 logical coordinate system.
+    // The canvas scales to fill the viewport while keeping pointer coordinates aligned.
+    const BASE_WIDTH = 1000;
+    const BASE_HEIGHT = 600;
+    let scaling = 1;
+    let labelFontSize = 20;
+    let snapEnabled = false;
+    const GRID_SPACING = 50; // Twice the node radius (radius = 25 logical units).
+
+    function resizeCanvas() {
+        const dpr = window.devicePixelRatio || 1;
+        canvas.width = Math.round(window.innerWidth * dpr);
+        canvas.height = Math.round(window.innerHeight * dpr);
+        canvas.style.width = window.innerWidth + "px";
+        canvas.style.height = window.innerHeight + "px";
+        scaling = Math.min(window.innerWidth / BASE_WIDTH, window.innerHeight / BASE_HEIGHT);
+        labelFontSize = 20 * scaling;
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        draw();
+    }
+
+    function toLogicalPoint(clientX, clientY) {
+        const rect = canvas.getBoundingClientRect();
+        const offsetX = (window.innerWidth - BASE_WIDTH * scaling) / 2;
+        const offsetY = (window.innerHeight - BASE_HEIGHT * scaling) / 2;
+        return {
+            x: (clientX - rect.left - offsetX) / scaling,
+            y: (clientY - rect.top - offsetY) / scaling
+        };
+    }
+
+    //      INITIAL OBJECTS AND PARAMETERS
+    //
+    // List of the MODIFIABLE OBJECT
+    let objects = [
+        { type: "circle", x: 100, y: 200, radius: 25, label: "1", color_border: "#0000FF", color_fill: "#6666FF", rotation: .5 * Math.PI, rot_system: [0,1] },
+        { type: "circle", x: 400, y: 200, radius: 25, label: "2", color_border: "#0000FF", color_fill: "#6666FF", rotation: .5 * Math.PI, rot_system: [0,1,2] },
+        { type: "circle", x: 300, y: 400, radius: 25, label: "3", color_border: "#0000FF", color_fill: "#6666FF", rotation:  0 * Math.PI, rot_system: [2] },
+    ];
+
+    let edges = [
+        { type: "edge", id: "E1", endpt1_idx: 0, endpt2_idx: 1, label: "1" },
+        { type: "edge", id: "E2", endpt1_idx: 0, endpt2_idx: 1, label: "2" },
+        { type: "edge", id: "E3", endpt1_idx: 1, endpt2_idx: 2, label: "3" },
+    ]
+
+    // Variables for the dragging and clicking functionalities
+    let dragging_obj = false;
+    let obj_dragged = 0;
+
+    // These are the offsets of the mouse with respect to the center of the dragged object
+    let offsetX = 0;
+    let offsetY = 0;
+
+    // We use this to see if we have moved the mouse (thus clicked) or not
+    let distXdown = 0;
+    let distYdown = 0;
+    let distXup = 0;
+    let distYup = 0;
+
+
+    //      DRAWING FUNCTIONS
+    //
+    // Draw only the intersection points of a regular 2D grid.
+    function draw_grid() {
+        const left = (0 - (window.innerWidth - BASE_WIDTH * scaling) / 2) / scaling;
+        const top = (0 - (window.innerHeight - BASE_HEIGHT * scaling) / 2) / scaling;
+        const right = left + window.innerWidth / scaling;
+        const bottom = top + window.innerHeight / scaling;
+        const startX = Math.floor(left / GRID_SPACING) * GRID_SPACING;
+        const startY = Math.floor(top / GRID_SPACING) * GRID_SPACING;
+        const endX = Math.ceil(right / GRID_SPACING) * GRID_SPACING;
+        const endY = Math.ceil(bottom / GRID_SPACING) * GRID_SPACING;
+
+        ctx.save();
+        ctx.fillStyle = "#cbd3df";
+        const pointRadius = 1.15 / scaling;
+        for (let x = startX; x <= endX; x += GRID_SPACING) {
+            for (let y = startY; y <= endY; y += GRID_SPACING) {
+                ctx.beginPath();
+                ctx.arc(x, y, pointRadius, 0, 2 * Math.PI);
+                ctx.fill();
+            }
+        }
+        ctx.restore();
+    }
+
+    function snapToGrid(value) {
+        return Math.round(value / GRID_SPACING) * GRID_SPACING;
+    }
+
+    // Draw movable
+    function draw_object() {
+        let mult_shift = 5
+
+        
+        // Draw all edges
+        ctx.lineWidth = 3;
+        for (let j = edges.length - 1; j >= 0; j--) {
+            // Find the endpoints and the directions for edges
+            let x0 = objects[edges[j].endpt1_idx].x;
+            let y0 = objects[edges[j].endpt1_idx].y;
+            let x1 = objects[edges[j].endpt2_idx].x;
+            let y1 = objects[edges[j].endpt2_idx].y;
+
+            let angl0 = objects[edges[j].endpt1_idx].rotation + 2 * Math.PI * (objects[edges[j].endpt1_idx].rot_system.indexOf(j) / objects[edges[j].endpt1_idx].rot_system.length);
+            let shiftx0 = objects[edges[j].endpt1_idx].radius * Math.cos(angl0);
+            let shifty0 = objects[edges[j].endpt1_idx].radius * Math.sin(angl0);
+
+            let angl1 = objects[edges[j].endpt2_idx].rotation + 2 * Math.PI * (objects[edges[j].endpt2_idx].rot_system.indexOf(j) / objects[edges[j].endpt2_idx].rot_system.length);
+            let shiftx1 = objects[edges[j].endpt2_idx].radius * Math.cos(angl1);
+            let shifty1 = objects[edges[j].endpt2_idx].radius * Math.sin(angl1);
+            
+            // Draw the actual Bezier curve
+            ctx.beginPath();
+            ctx.moveTo(x0+shiftx0, y0+shifty0);
+            ctx.bezierCurveTo(x0+mult_shift*shiftx0, y0+mult_shift*shifty0, x1+mult_shift*shiftx1, y1+mult_shift*shifty1, x1, y1);
+
+            ctx.strokeStyle = "black";
+            ctx.stroke();
+        }
+
+        // Draw all circles
+        ctx.lineWidth = 5;
+        for (let i = objects.length - 1; i >= 0; i--) {
+            // Draw the circle itself
+            ctx.beginPath();
+            ctx.arc(objects[i].x, objects[i].y, objects[i].radius, 0, 2 * Math.PI);
+            if (obj_dragged != i || dragging_obj == false) {
+                ctx.fillStyle = objects[i].color_fill;
+                ctx.fill();
+                ctx.strokeStyle = objects[i].color_border;
+                ctx.stroke();
+            } else {
+                ctx.fillStyle = "red";
+                ctx.fill();
+            }
+
+            // Draw the label
+            ctx.font = `${labelFontSize}px Open Sans`;
+            ctx.fillStyle = "white";
+            ctx.textBaseline = "middle";
+            ctx.textAlign = "center";
+            ctx.fillText(objects[i].label, objects[i].x, objects[i].y);
+        }
+    }
+
+    // Draw all
+    function draw() {
+        const dpr = window.devicePixelRatio || 1;
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+        const offsetX = (window.innerWidth - BASE_WIDTH * scaling) / 2;
+        const offsetY = (window.innerHeight - BASE_HEIGHT * scaling) / 2;
+        ctx.save();
+        ctx.translate(offsetX, offsetY);
+        ctx.scale(scaling, scaling);
+        draw_grid();
+        draw_object();
+        ctx.restore();
+    }
+
+
+
+    //      INPUT MANAGEMENT
+    //
+    // Object click
+    function obj_click(event) {
+        const point = toLogicalPoint(event.clientX, event.clientY);
+        const mouseX = point.x;
+        const mouseY = point.y;
+
+        distXdown = mouseX
+        distYdown = mouseY
+
+        // Is the mouse inside a circle?
+        for (let i = objects.length - 1; i >= 0; i-- && dragging_obj == false) {
+            const dx = mouseX - objects[i].x;
+            const dy = mouseY - objects[i].y;
+
+            if (dx * dx + dy * dy <= objects[i].radius * objects[i].radius) {
+                dragging_obj = true;
+                obj_dragged = i;
+
+                // Preserve pointer events throughout the drag
+                canvas.setPointerCapture(event.pointerId);
+
+                offsetX = mouseX - objects[i].x;
+                offsetY = mouseY - objects[i].y;
+            }
+        }
+    }
+
+    // Object move
+    function obj_move(event) {
+        if (!dragging_obj) return;
+
+        const point = toLogicalPoint(event.clientX, event.clientY);
+        const mouseX = point.x;
+        const mouseY = point.y;
+
+        const nextX = mouseX - offsetX;
+        const nextY = mouseY - offsetY;
+        objects[obj_dragged].x = snapEnabled ? snapToGrid(nextX) : nextX;
+        objects[obj_dragged].y = snapEnabled ? snapToGrid(nextY) : nextY;
+
+        draw();
+    }
+
+    // Object release
+    function obj_release() {
+        dragging_obj = false;
+        obj_dragged = 0
+
+        draw();
+    }
+
+    // Mouse left
+    function mouse_left() {
+        dragging_obj = false;
+        obj_dragged = 0
+
+        draw();
+    }
+
+    // Click rotation
+    function obj_rotation(event) {
+        const point = toLogicalPoint(event.clientX, event.clientY);
+        const mouseXclick = point.x;
+        const mouseYclick = point.y;
+
+        // Is the mouse inside a circle?
+        for (let i = objects.length - 1; i >= 0 && ( Math.abs(distXdown - mouseXclick) + Math.abs(distYdown - mouseYclick) ) < 10; i--) {
+            const dx = mouseXclick - objects[i].x;
+            const dy = mouseYclick - objects[i].y;
+
+            if (dx * dx + dy * dy <= objects[i].radius * objects[i].radius) {
+                objects[i].rotation += 2/9 * Math.PI;
+                draw();
+                return;         // with this, we don't rotate all vertices but only one if overlapped
+            }
+        }
+    }
+
+
+    //      EVENT LISTENERS
+    //
+    // Mouse pressed
+    canvas.addEventListener("pointerdown", obj_click, {passive: false});
+    
+    // Mouse moved
+    canvas.addEventListener("pointermove", obj_move, {passive: false});
+    
+    // Mouse released
+    canvas.addEventListener("pointerup", obj_release, {passive: false});
+    
+    // Mouse leaves the canvas
+    canvas.addEventListener("pointercancel", mouse_left);
+    
+    // Mouse clicks a vertex
+    canvas.addEventListener("click", obj_rotation);
+
+    document.getElementById("resetViewButton").addEventListener("click", () => {
+        objects[0].x = 100; objects[0].y = 200;
+        objects[1].x = 400; objects[1].y = 200;
+        objects[2].x = 300; objects[2].y = 400;
+        objects.forEach((obj, i) => {
+            obj.rotation = [0.5 * Math.PI, 0.5 * Math.PI, 0][i];
+        });
+        draw();
+    });
+
+    document.getElementById("snapToggle").addEventListener("change", (event) => {
+        snapEnabled = event.currentTarget.checked;
+    });
+
+    window.addEventListener("resize", resizeCanvas);
+    resizeCanvas();
+</script>
+
+</body>
+</html>
